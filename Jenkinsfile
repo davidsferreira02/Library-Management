@@ -14,7 +14,7 @@ pipeline {
         }
         stage('Build') {
             steps {
-                // Exemplo de comando de build
+                sh 'mvn clean install'
                 sh 'echo "Building..."'
             }
         }
