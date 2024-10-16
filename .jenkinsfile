@@ -2,16 +2,7 @@ pipeline {
     agent any
 
     stages {
-        stage('SCM Checkout') {
-            steps {
-                // Clona o repositório definido no Jenkinsfile
-                checkout([
-                    $class: 'GitSCM', 
-                    branches: [[name: '*/main']], 
-                    userRemoteConfigs: [[url: 'https://github.com/davidsferreira02/M1A_1240444_1170605.git']]
-                ])
-            }
-        }
+      
         stage('Build') {
             steps {
                 sh 'echo "Building..."'
