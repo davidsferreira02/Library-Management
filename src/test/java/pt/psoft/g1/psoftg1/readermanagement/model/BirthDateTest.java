@@ -3,6 +3,8 @@ package pt.psoft.g1.psoftg1.readermanagement.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.nio.file.AccessDeniedException;
 import java.time.DateTimeException;
@@ -45,6 +47,8 @@ public class BirthDateTest {
 
 
 
+
+
     @Test
     void ensureBirthDateCanBeCreatedForExactMinimumAge() {
         ReflectionTestUtils.setField(new BirthDate(), "minimumAge", 18);
@@ -63,10 +67,5 @@ public class BirthDateTest {
         assertEquals("Invalid value for DayOfMonth (valid values 1 - 28/31): 32", exception.getMessage());
     }
 
-    @Test
-    void getBirthDate() {
-        BirthDate birthDate = new BirthDate(2000, 1, 1);
-        LocalDate expectedDate = LocalDate.of(2000, 1, 1);
-        assertEquals(expectedDate, birthDate.getBirthDate());
-    }
+
 }

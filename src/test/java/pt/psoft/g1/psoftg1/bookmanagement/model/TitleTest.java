@@ -90,5 +90,11 @@ class TitleTest {
         assertThrows(IllegalArgumentException.class, () -> title.setTitle(stringBuilder.toString())); // Texto longo omitido para brevidade
     }
 
+    @Test
+    void getTitle() {
+        Title title = new Title("Initial title");
+        assertEquals("Initial title", title.getTitle());
+    }
+
 
 }

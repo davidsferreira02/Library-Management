@@ -3,13 +3,17 @@ package pt.psoft.g1.psoftg1.authormanagement.model;
 import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 class AuthorTest {
     private final String validName = "João Alberto";
@@ -100,11 +104,14 @@ class AuthorTest {
     @Test
     void ensureAuthorCanBeUpdated() {
         Author author = new Author(validName, validBio, null);
-        UpdateAuthorRequest updateRequest = new UpdateAuthorRequest("Nova Bio", "Novo Nome", null, null);
+        MultipartFile mockPhoto = mock(MultipartFile.class);
+        UpdateAuthorRequest updateRequest = new UpdateAuthorRequest("Nova Bio", "Novo Nome", mockPhoto, "new Photo");
         author.applyPatch(author.getVersion(), updateRequest);
         assertEquals("Novo Nome", author.getName());
         assertEquals("Nova Bio", author.getBio());
+        assertEquals("new Photo", author.getPhoto().getPhotoFile());
     }
+
 
     @Test
     void testApplyPatchWithNullFields() {
@@ -131,13 +138,33 @@ class AuthorTest {
         assertThrows(IllegalArgumentException.class, () -> author.setName(""));
     }
 
-    @Test
-    void testRemovePhotoWithCorrectVersion() {
-        Author author = new Author(validName, validBio, "photoTest.jpg");
-        long currentVersion = author.getVersion();
 
+    @Test
+    void removePhotoWithMatchingVersion() {
+        Author author = new Author("Author Name", "Author Bio", "photoURI");
+        long currentVersion = author.getVersion();
         author.removePhoto(currentVersion);
         assertNull(author.getPhoto());
+    }
+
+    @Test
+    void removePhotoWithNonMatchingVersion() {
+        Author author = new Author("Author Name", "Author Bio", "photoURI");
+        long currentVersion = author.getVersion();
+        long wrongVersion = currentVersion + 1;
+        assertThrows(ConflictException.class, () -> author.removePhoto(wrongVersion));
+    }
+
+    @Test
+    void getId() {
+        Author author = new Author(validName, validBio, null);
+        assertEquals(null, author.getId());
+    }
+
+    @Test
+    void getAuthorNumber() {
+        Author author = new Author(validName, validBio, null);
+        assertEquals(null, author.getAuthorNumber());
     }
 }
 

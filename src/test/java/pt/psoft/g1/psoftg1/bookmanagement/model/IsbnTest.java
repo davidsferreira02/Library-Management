@@ -62,4 +62,48 @@ class IsbnTest {
     void ensureChecksum10IsCorrect() {
         assertThrows(IllegalArgumentException.class, () -> new Isbn("8175257667"));
     }
+
+    @Test
+    void ensureIsbnEquals() {
+        final var isbn1 = new Isbn("8175257660");
+        final var isbn2 = new Isbn("8175257660");
+        assertEquals(isbn1, isbn2);
+    }
+
+    @Test
+    void ensureHashCodeIsConsistentForSameIsbn() {
+        Isbn isbn1 = new Isbn("9782826012092");
+        Isbn isbn2 = new Isbn("9782826012092");
+        assertEquals(isbn1.hashCode(), isbn2.hashCode());
+    }
+
+ //caixa opaca
+
+    @Test
+    void testInvalidIsbn10WithNonDigits() {
+        String invalidIsbn10 = "12345ABCDE";
+        assertThrows(IllegalArgumentException.class, () -> new Isbn(invalidIsbn10));
+    }
+
+    @Test
+    void testInvalidIsbn13WithNonDigits() {
+        String invalidIsbn13 = "978X306406157";
+        assertThrows(IllegalArgumentException.class, () -> new Isbn(invalidIsbn13));
+    }
+
+    //caixa transparente
+
+    @Test
+    void testIsbnWithShortLength() {
+        String shortIsbn = "123";
+        assertThrows(IllegalArgumentException.class, () -> new Isbn(shortIsbn));
+    }
+
+
+    @Test
+    void testIsbn13InvalidChecksum() {
+        String isbn13Invalid = "9780306406156";
+        assertThrows(IllegalArgumentException.class, () -> new Isbn(isbn13Invalid));
+    }
+
 }

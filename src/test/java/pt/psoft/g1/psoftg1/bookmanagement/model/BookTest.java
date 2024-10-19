@@ -3,14 +3,19 @@ package pt.psoft.g1.psoftg1.bookmanagement.model;
 import lombok.NonNull;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 class BookTest {
     private final String validIsbn = "9782826012092";
@@ -22,6 +27,7 @@ class BookTest {
     private final Genre validGenre = new Genre("Fantasia");
     private final Genre validGenre2 = new Genre("Jogos de Consola");
     private ArrayList<Author> authors = new ArrayList<>();
+
 
     @BeforeEach
     void setUp(){
@@ -78,6 +84,8 @@ class BookTest {
         assertEquals(authors, book.getAuthors());
 
     }
+
+
 
 
 }
