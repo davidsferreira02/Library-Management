@@ -2,27 +2,28 @@ pipeline {
     agent any
 
     stages {
-      
+
         stage('Build') {
             steps {
                 sh 'echo "Building..."'
-             
+                sh 'mvn clean install'
             }
         }
-        
-        stage('Test') {
+
+        stage('Package') {
             steps {
-                // Exemplo de comando de teste
-                sh 'echo "Running Tests..."'
+                sh 'echo "Packaging..."'
+                sh 'mvn package'
             }
         }
-        
-        stage('Deploy') {
+
+        stage('Unit Tests') {
             steps {
-                // Exemplo de comando de deploy
-                sh 'echo "Deploying..."'
+                sh 'echo "Running Unit Tests..."'
+                sh 'mvn test'
             }
         }
+
     }
 }
 

@@ -23,6 +23,7 @@
 		<!-- automatically run annotation processors within the incremental compilation -->
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
 	</properties>
+	<packaging>jar</packaging>
 
 	<dependencies>
 		<dependency>
