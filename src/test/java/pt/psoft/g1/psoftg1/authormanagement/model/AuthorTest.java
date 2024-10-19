@@ -82,5 +82,62 @@ class AuthorTest {
         assertNotNull(photo);
         assertEquals("photoTest.jpg", photo.getPhotoFile());
     }
+
+   // unitario caixa opaca
+
+    @Test
+    void ensureName() {
+        Author author = new Author(validName, validBio, null);
+        assertEquals("João Alberto", author.getName());
+    }
+
+    @Test
+    void ensureBio() {
+        Author author = new Author(validName, validBio, null);
+        assertEquals("O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.", author.getBio());
+    }
+
+    @Test
+    void ensureAuthorCanBeUpdated() {
+        Author author = new Author(validName, validBio, null);
+        UpdateAuthorRequest updateRequest = new UpdateAuthorRequest("Nova Bio", "Novo Nome", null, null);
+        author.applyPatch(author.getVersion(), updateRequest);
+        assertEquals("Novo Nome", author.getName());
+        assertEquals("Nova Bio", author.getBio());
+    }
+
+    @Test
+    void testApplyPatchWithNullFields() {
+        Author author = new Author(validName, validBio, null);
+
+        UpdateAuthorRequest updateRequest = new UpdateAuthorRequest(null, null, null, null);
+        long currentVersion = author.getVersion();
+
+        author.applyPatch(currentVersion, updateRequest);
+
+        // Certifique-se de que nada foi alterado
+        assertEquals(validName, author.getName());
+        assertEquals(validBio, author.getBio());
+    }
+
+
+    //caixa branca
+
+    @Test
+    void testSetNameWithInvalidInput() {
+        Author author = new Author(validName, validBio, null);
+
+        assertThrows(IllegalArgumentException.class, () -> author.setName(null));
+        assertThrows(IllegalArgumentException.class, () -> author.setName(""));
+    }
+
+    @Test
+    void testRemovePhotoWithCorrectVersion() {
+        Author author = new Author(validName, validBio, "photoTest.jpg");
+        long currentVersion = author.getVersion();
+
+        author.removePhoto(currentVersion);
+        assertNull(author.getPhoto());
+    }
 }
 

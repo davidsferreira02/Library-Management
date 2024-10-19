@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
+import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
@@ -84,4 +85,22 @@ public class ReaderTest {
         ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",genreList);
         assertEquals(2, readerDetails.getInterestList().size());
     }
+
+
+    // Testes unitários
+
+    @Test
+    void ensureExceptionIsThrownForNullUsername() {
+        assertThrows(IllegalArgumentException.class, () -> new Reader(null, "password"));
+    }
+
+
+
+    @Test
+    void getReader(){
+        Reader reader = new Reader("username", "Password95");
+        ReaderDetails readerDetails=new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false,null,null);
+        assertEquals(reader, readerDetails.getReader());
+    }
+    
 }

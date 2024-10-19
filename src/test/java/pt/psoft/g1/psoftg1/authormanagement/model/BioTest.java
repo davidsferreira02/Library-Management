@@ -54,4 +54,32 @@ public class BioTest {
         bio.setBio("Some other bio");
         assertEquals("Some other bio", bio.toString());
     }
+    //caixa Preta unitarios
+    @Test
+    void ensureBioAcceptsMaxLength() {
+        StringBuilder longBio = new StringBuilder();
+        for (int i = 0; i < 4096; i++) {
+            longBio.append("a");
+        }
+        Bio bio = new Bio(longBio.toString());
+        assertEquals(longBio.toString(), bio.toString());
+    }
+
+    @Test
+    void ensureBioDeclinesOverMaxLength() {
+        StringBuilder longBio = new StringBuilder();
+        for (int i = 0; i < 4097; i++) {
+            longBio.append("a");
+        }
+        assertThrows(IllegalArgumentException.class, () -> new Bio(longBio.toString()));
+    }
+
+    //Caixa Branca Unitarios
+    @Test
+    void ensureBioCannotBeOnlyWhitespace() {
+        assertThrows(IllegalArgumentException.class, () -> new Bio("     "));
+    }
+
+
+
 }

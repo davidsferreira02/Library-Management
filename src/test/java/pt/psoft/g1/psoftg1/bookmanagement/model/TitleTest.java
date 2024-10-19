@@ -2,6 +2,8 @@ package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import org.junit.jupiter.api.Test;
 
+import java.util.concurrent.ThreadLocalRandom;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -66,5 +68,27 @@ class TitleTest {
         title.setTitle("Some other title");
         assertEquals("Some other title", title.toString());
     }
+
+
+    //caixa branca unitario
+    @Test
+    void testSetTitleWithValidData() {
+        Title title = new Title("Initial title");
+        title.setTitle("Updated title");
+        assertEquals("Updated title", title.toString());
+    }
+
+    @Test
+    void testSetTitleWithOversize() {
+        Title title = new Title("Initial title");
+        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+        StringBuilder stringBuilder = new StringBuilder(129);
+        for (int i = 0; i < 129; i++) {
+            int randomIndex = ThreadLocalRandom.current().nextInt(characters.length());
+            stringBuilder.append(characters.charAt(randomIndex));
+        }
+        assertThrows(IllegalArgumentException.class, () -> title.setTitle(stringBuilder.toString())); // Texto longo omitido para brevidade
+    }
+
 
 }

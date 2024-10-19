@@ -48,4 +48,25 @@ class GenreTest {
         assertEquals("Some genre", genre.toString());
     }
 
+    //caixa preta unitarios
+
+    @Test
+    void ensureGenreAcceptsSpecialCharacters() {
+        Genre genre = new Genre("Rock & Roll!");
+        assertEquals("Rock & Roll!", genre.toString());
+    }
+
+    // caixa branca unitarios
+
+    @Test
+    void ensureGenreCannotBeOnlyWhitespace() {
+        assertThrows(IllegalArgumentException.class, () -> new Genre("    "));
+    }
+
+
+
+
+
+
+
 }
