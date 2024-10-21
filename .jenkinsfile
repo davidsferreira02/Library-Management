@@ -1,6 +1,10 @@
 pipeline {
     agent any
-
+    environment {
+        JAVA_HOME = '/usr/bin/java'        // Defina o caminho correto do JDK
+        M2_HOME = '/usr/bin/mvn'         // Defina o caminho do Maven (se necessário)
+        PATH = "$M2_HOME/bin:$JAVA_HOME/bin:$PATH"  // Adiciona Maven e Java ao PATH
+    }
     stages {
 
         stage('Build') {
