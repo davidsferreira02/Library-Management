@@ -1,7 +1,9 @@
 package pt.psoft.g1.psoftg1.usermanagement.model;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import static org.junit.Assert.*;
 
@@ -90,4 +92,8 @@ public class UserTest {
     }
 
 
+
+
 }
+
+

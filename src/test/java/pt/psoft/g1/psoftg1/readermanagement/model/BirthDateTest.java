@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.readermanagement.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
@@ -44,11 +45,6 @@ public class BirthDateTest {
     }
 
 
-
-
-
-
-
     @Test
     void ensureBirthDateCanBeCreatedForExactMinimumAge() {
         ReflectionTestUtils.setField(new BirthDate(), "minimumAge", 18);
@@ -61,11 +57,21 @@ public class BirthDateTest {
         DateTimeException exception = assertThrows(DateTimeException.class, () -> new BirthDate(2000, 13, 1));
         assertEquals("Invalid value for MonthOfYear (valid values 1 - 12): 13", exception.getMessage());
     }
+
     @Test
     void ensureExceptionIsThrownForInvalidDay() {
         DateTimeException exception = assertThrows(DateTimeException.class, () -> new BirthDate(2000, 1, 32));
         assertEquals("Invalid value for DayOfMonth (valid values 1 - 28/31): 32", exception.getMessage());
     }
 
-
+    @Test
+    void ensureExceptionIsThrownForInvalidUserAge() {
+        BirthDate birthDate = new BirthDate(2000, 1, 1);
+        ReflectionTestUtils.setField(birthDate, "minimumAge", 18);
+        assertThrows(org.springframework.security.access.AccessDeniedException.class, () -> {
+            ReflectionTestUtils.invokeMethod(birthDate, "setBirthDate", 2019, 1, 1);
+        });
+    }
 }
+
+

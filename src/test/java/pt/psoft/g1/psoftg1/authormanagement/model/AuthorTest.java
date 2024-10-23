@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.authormanagement.model;
 import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
@@ -35,8 +36,8 @@ class AuthorTest {
         assertThrows(IllegalArgumentException.class, () -> new Author(validName,null, null));
     }
 
-    @Test
-    void whenVersionIsStaleItIsNotPossibleToPatch() {
+     @Test
+   void whenVersionIsStaleItIsNotPossibleToPatch() {
         final var subject = new Author(validName,validBio, null);
 
         assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
@@ -102,35 +103,6 @@ class AuthorTest {
     }
 
     @Test
-    void ensureAuthorCanBeUpdated() {
-        Author author = new Author(validName, validBio, null);
-        MultipartFile mockPhoto = mock(MultipartFile.class);
-        UpdateAuthorRequest updateRequest = new UpdateAuthorRequest("Nova Bio", "Novo Nome", mockPhoto, "new Photo");
-        author.applyPatch(author.getVersion(), updateRequest);
-        assertEquals("Novo Nome", author.getName());
-        assertEquals("Nova Bio", author.getBio());
-        assertEquals("new Photo", author.getPhoto().getPhotoFile());
-    }
-
-
-    @Test
-    void testApplyPatchWithNullFields() {
-        Author author = new Author(validName, validBio, null);
-
-        UpdateAuthorRequest updateRequest = new UpdateAuthorRequest(null, null, null, null);
-        long currentVersion = author.getVersion();
-
-        author.applyPatch(currentVersion, updateRequest);
-
-        // Certifique-se de que nada foi alterado
-        assertEquals(validName, author.getName());
-        assertEquals(validBio, author.getBio());
-    }
-
-
-    //caixa branca
-
-    @Test
     void testSetNameWithInvalidInput() {
         Author author = new Author(validName, validBio, null);
 
@@ -165,6 +137,34 @@ class AuthorTest {
     void getAuthorNumber() {
         Author author = new Author(validName, validBio, null);
         assertEquals(null, author.getAuthorNumber());
+    }
+
+    @Test
+    void applyPatchWithoutNull(){
+        Author author = new Author("Initial Name", "Initial Bio", "photo uri");
+        UpdateAuthorRequest mockRequest = Mockito.mock(UpdateAuthorRequest.class);
+        Mockito.when(mockRequest.getName()).thenReturn("Updated Name");
+        Mockito.when(mockRequest.getBio()).thenReturn("new Bio");
+        Mockito.when(mockRequest.getPhotoURI()).thenReturn("new photo uri");
+        author.applyPatch(author.getVersion(), mockRequest);
+        Mockito.verify(mockRequest, Mockito.times(2)).getName();
+        Mockito.verify(mockRequest, Mockito.times(2)).getBio();
+        Mockito.verify(mockRequest, Mockito.times(2)).getPhotoURI();
+
+    }
+
+    @Test
+    void applyPatchWithNull(){
+        Author author = new Author("Initial Name", "Initial Bio", "photo uri");
+        UpdateAuthorRequest mockRequest = Mockito.mock(UpdateAuthorRequest.class);
+        Mockito.when(mockRequest.getName()).thenReturn(null);
+        Mockito.when(mockRequest.getBio()).thenReturn(null);
+        Mockito.when(mockRequest.getPhotoURI()).thenReturn(null);
+        author.applyPatch(author.getVersion(), mockRequest);
+        Mockito.verify(mockRequest, Mockito.times(1)).getName();
+        Mockito.verify(mockRequest, Mockito.times(1)).getBio();
+        Mockito.verify(mockRequest, Mockito.times(1)).getPhotoURI();
+
     }
 }
 

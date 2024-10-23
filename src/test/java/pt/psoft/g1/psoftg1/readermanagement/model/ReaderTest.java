@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.readermanagement.model;
 
 import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,6 +10,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.services.UpdateReaderRequest;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
@@ -29,44 +31,44 @@ public class ReaderTest {
     @Test
     void ensureValidReaderDetailsAreCreated() {
         Reader mockReader = mock(Reader.class);
-        assertDoesNotThrow(() -> new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,null, null));
+        assertDoesNotThrow(() -> new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false, null, null));
     }
 
     @Test
     void ensureExceptionIsThrownForNullReader() {
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, null, "2010-01-01", "912345678", true, false, false,null,null));
+        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, null, "2010-01-01", "912345678", true, false, false, null, null));
     }
 
     @Test
     void ensureExceptionIsThrownForNullPhoneNumber() {
         Reader mockReader = mock(Reader.class);
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, mockReader, "2010-01-01", null, true, false, false,null,null));
+        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, mockReader, "2010-01-01", null, true, false, false, null, null));
     }
 
     @Test
     void ensureExceptionIsThrownForNoGdprConsent() {
         Reader mockReader = mock(Reader.class);
-        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, mockReader, "2010-01-01", "912345678", false, false, false,null,null));
+        assertThrows(IllegalArgumentException.class, () -> new ReaderDetails(123, mockReader, "2010-01-01", "912345678", false, false, false, null, null));
     }
 
     @Test
     void ensureGdprConsentIsTrue() {
         Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,null,null);
+        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false, null, null);
         assertTrue(readerDetails.isGdprConsent());
     }
 
     @Test
     void ensurePhotoCanBeNull_AkaOptional() {
         Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,null,null);
+        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false, null, null);
         assertNull(readerDetails.getPhoto());
     }
 
     @Test
     void ensureValidPhoto() {
         Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",null);
+        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false, "readerPhotoTest.jpg", null);
         Photo photo = readerDetails.getPhoto();
 
         //This is here to force the test to fail if the photo is null
@@ -79,10 +81,10 @@ public class ReaderTest {
     @Test
     void ensureInterestListCanBeNullOrEmptyList_AkaOptional() {
         Reader mockReader = mock(Reader.class);
-        ReaderDetails readerDetailsNullInterestList = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",null);
+        ReaderDetails readerDetailsNullInterestList = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false, "readerPhotoTest.jpg", null);
         assertNull(readerDetailsNullInterestList.getInterestList());
 
-        ReaderDetails readerDetailsInterestListEmpty = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",new ArrayList<>());
+        ReaderDetails readerDetailsInterestListEmpty = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false, "readerPhotoTest.jpg", new ArrayList<>());
         assertEquals(0, readerDetailsInterestListEmpty.getInterestList().size());
     }
 
@@ -95,7 +97,7 @@ public class ReaderTest {
         genreList.add(g1);
         genreList.add(g2);
 
-        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false,"readerPhotoTest.jpg",genreList);
+        ReaderDetails readerDetails = new ReaderDetails(123, mockReader, "2010-01-01", "912345678", true, false, false, "readerPhotoTest.jpg", genreList);
         assertEquals(2, readerDetails.getInterestList().size());
     }
 
@@ -108,13 +110,13 @@ public class ReaderTest {
     }
 
 
-
     @Test
-    void getReader(){
+    void getReader() {
         Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails=new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false,null,null);
+        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
         assertEquals(reader, readerDetails.getReader());
     }
+
     @Test
     void ensureBirthDateIsCorrectlyRetrieved() {
         Reader reader = new Reader("username", "Password95");
@@ -124,9 +126,9 @@ public class ReaderTest {
     }
 
     @Test
-    void getPhoneNumber(){
+    void getPhoneNumber() {
         Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails=new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false,null,null);
+        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
         assertEquals("912345678", readerDetails.getPhoneNumber().toString());
     }
 
@@ -138,9 +140,9 @@ public class ReaderTest {
     }
 
     @Test
-    void getThirdPartySharingConsent(){
+    void getThirdPartySharingConsent() {
         Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails=new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false,null,null);
+        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
         assertFalse(readerDetails.isThirdPartySharingConsent());
     }
 
@@ -189,14 +191,25 @@ public class ReaderTest {
 
     @Test
     void ProtectedConstructor() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
-        Constructor<Reader> constructor =Reader.class.getDeclaredConstructor();
-
-
+        Constructor<Reader> constructor = Reader.class.getDeclaredConstructor();
         constructor.setAccessible(true);
-
-
-        Reader reader  = constructor.newInstance();
-
+        Reader reader = constructor.newInstance();
         assertNotNull(reader, "The Reader instance must not be null");
+    }
+
+    @Test
+    void removePhotoTest()  {
+        Reader reader= new Reader("username", "Password95");
+        Genre genre=mock(Genre.class);
+        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, List.of(genre));
+        ReflectionTestUtils.setField(readerDetails, "version", 2L);
+        assertThrows(ConflictException.class, () -> readerDetails.removePhoto(1L));
+
+        ReflectionTestUtils.setField(readerDetails, "version", 1L);
+        readerDetails.removePhoto(1L);
+        assertNull(readerDetails.getPhoto());
+
+
+
     }
 }
