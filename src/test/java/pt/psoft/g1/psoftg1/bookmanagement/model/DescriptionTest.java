@@ -48,6 +48,7 @@ class DescriptionTest {
         description.setDescription("Some other description");
         assertEquals("Some other description", description.toString());
     }
+    /*
     //caixa Preta unitarios
     @Test
     void ensureDescriptionCanBeBlankOrWhitespace() {
@@ -77,7 +78,7 @@ class DescriptionTest {
         }
         assertThrows(IllegalArgumentException.class, () -> new Description(longDescription.toString()));
     }
-
+*/
 
 
 

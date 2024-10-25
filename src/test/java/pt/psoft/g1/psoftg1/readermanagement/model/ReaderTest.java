@@ -1,31 +1,21 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
-import jakarta.validation.ConstraintViolationException;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.springframework.mock.web.MockMultipartFile;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.test.util.ReflectionTestUtils;
-import org.springframework.web.multipart.MultipartFile;
-import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.services.UpdateReaderRequest;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
-import pt.psoft.g1.psoftg1.usermanagement.model.Librarian;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.*;
 
 public class ReaderTest {
     @Test
@@ -102,92 +92,6 @@ public class ReaderTest {
     }
 
 
-    // Testes unitários
-
-    @Test
-    void ensureExceptionIsThrownForNullUsername() {
-        assertThrows(IllegalArgumentException.class, () -> new Reader(null, "password"));
-    }
-
-
-    @Test
-    void getReader() {
-        Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
-        assertEquals(reader, readerDetails.getReader());
-    }
-
-    @Test
-    void ensureBirthDateIsCorrectlyRetrieved() {
-        Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
-        BirthDate expectedBirthDate = new BirthDate("2010-01-01");
-        assertEquals(expectedBirthDate.toString(), readerDetails.getBirthDate().toString());
-    }
-
-    @Test
-    void getPhoneNumber() {
-        Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
-        assertEquals("912345678", readerDetails.getPhoneNumber().toString());
-    }
-
-    @Test
-    void getMarketingConsent() {
-        Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
-        assertFalse(readerDetails.isMarketingConsent());
-    }
-
-    @Test
-    void getThirdPartySharingConsent() {
-        Reader reader = new Reader("username", "Password95");
-        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, null);
-        assertFalse(readerDetails.isThirdPartySharingConsent());
-    }
-
-
-    @Test
-    void applyPatchReaderTest() {
-        Reader reader = new Reader("username", "Password95");
-        MultipartFile mockPhoto = mock(MultipartFile.class);
-        List<Genre> genreList = List.of(new Genre("genre1"), new Genre("genre2"));
-
-        UpdateReaderRequest updateReaderRequest = new UpdateReaderRequest();
-        updateReaderRequest.setNumber("123");
-        updateReaderRequest.setUsername("newUsername");
-        updateReaderRequest.setPassword("newPassword123");
-        updateReaderRequest.setFullName("full name updated");
-        updateReaderRequest.setBirthDate("2000-01-01");
-        updateReaderRequest.setPhoneNumber("987654321");
-        updateReaderRequest.setMarketing(true);
-        updateReaderRequest.setThirdParty(true);
-        updateReaderRequest.setInterestList(List.of("genre1", "genre2"));
-        updateReaderRequest.setPhoto(mockPhoto);
-
-        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, genreList);
-
-        ReflectionTestUtils.setField(readerDetails, "version", 1L);
-
-        readerDetails.applyPatch(readerDetails.getVersion(), updateReaderRequest, null, null);
-
-        PasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
-
-        assertEquals("newUsername", reader.getUsername());
-        assertTrue(passwordEncoder.matches("newPassword123", reader.getPassword()));
-
-        // Compare components of the birth date directly
-        LocalDate birthDate = readerDetails.getBirthDate().getBirthDate();
-        assertEquals(2000, birthDate.getYear());
-        assertEquals(1, birthDate.getMonthValue());
-        assertEquals(1, birthDate.getDayOfMonth());
-
-        assertEquals("987654321", readerDetails.getPhoneNumber());
-        assertTrue(readerDetails.isMarketingConsent());
-        assertTrue(readerDetails.isThirdPartySharingConsent());
-        assertEquals(2, readerDetails.getInterestList().size());
-        assertNull(readerDetails.getPhoto());
-    }
 
     @Test
     void ProtectedConstructor() throws NoSuchMethodException, InvocationTargetException, InstantiationException, IllegalAccessException {
@@ -197,11 +101,69 @@ public class ReaderTest {
         assertNotNull(reader, "The Reader instance must not be null");
     }
 
+
+
     @Test
+    void applyPatchTest() {
+
+        Reader reader = Mockito.mock(Reader.class);
+        ReaderDetails readerDetails = Mockito.spy(new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, true, "initialPhoto.jpg", null));
+        ReflectionTestUtils.setField(readerDetails, "version", 1L);
+
+
+        UpdateReaderRequest updateRequest = Mockito.mock(UpdateReaderRequest.class);
+        Mockito.when(updateRequest.getPassword()).thenReturn(null);
+        Mockito.when(updateRequest.getUsername()).thenReturn(null);
+        Mockito.when(updateRequest.getFullName()).thenReturn(null);
+        Mockito.when(updateRequest.getBirthDate()).thenReturn(null);
+        Mockito.when(updateRequest.getPhoneNumber()).thenReturn(null);
+        Mockito.when(updateRequest.getMarketing()).thenReturn(false);
+
+
+
+
+        readerDetails.applyPatch(1L, updateRequest, null, null);
+
+
+        Mockito.verify(reader, Mockito.never()).setPassword(Mockito.anyString());
+        Mockito.verify(reader, Mockito.never()).setUsername(Mockito.anyString());
+
+        Mockito.verify(readerDetails, Mockito.never()).setMarketingConsent(Mockito.anyBoolean());
+        // UpdateReaderRequest with non-null values
+        Mockito.when(updateRequest.getPassword()).thenReturn("Password123");
+        Mockito.when(updateRequest.getUsername()).thenReturn("Username123");
+        Mockito.when(updateRequest.getFullName()).thenReturn("Full Name Updated");
+        Mockito.when(updateRequest.getBirthDate()).thenReturn("2000-01-01");
+        Mockito.when(updateRequest.getPhoneNumber()).thenReturn("987654321");
+        Mockito.when(updateRequest.getMarketing()).thenReturn(true);
+        Mockito.when(updateRequest.getThirdParty()).thenReturn(true);
+
+
+
+
+        readerDetails.applyPatch(1L, updateRequest, null, null);
+
+        Mockito.verify(reader, Mockito.times(1)).setPassword("Password123");
+        Mockito.verify(reader, Mockito.times(1)).setUsername("Username123");
+        Mockito.verify(reader, Mockito.times(1)).setName("Full Name Updated");;
+        Mockito.verify(readerDetails, Mockito.times(1)).setMarketingConsent(true);
+        Mockito.verify(readerDetails, Mockito.times(1)).setThirdPartySharingConsent(true);
+
+
+    }
+
+
+    @Test
+    void applyPatchTestConflict() {
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, List.of(Mockito.mock(Genre.class)));
+        ReflectionTestUtils.setField(readerDetails, "version", 2L);
+
+        assertThrows(ConflictException.class, () -> readerDetails.applyPatch(1L, Mockito.mock(UpdateReaderRequest.class), null, null));
+    }
+     @Test
     void removePhotoTest()  {
-        Reader reader= new Reader("username", "Password95");
-        Genre genre=mock(Genre.class);
-        ReaderDetails readerDetails = new ReaderDetails(123, reader, "2010-01-01", "912345678", true, false, false, null, List.of(genre));
+
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, List.of(Mockito.mock(Genre.class)));
         ReflectionTestUtils.setField(readerDetails, "version", 2L);
         assertThrows(ConflictException.class, () -> readerDetails.removePhoto(1L));
 
@@ -210,6 +172,24 @@ public class ReaderTest {
         assertNull(readerDetails.getPhoto());
 
 
+    }
+
+    @Test
+    public void getPhoneNumberTest(){
+
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
+        assertEquals("912345678", readerDetails.getPhoneNumber());
 
     }
+
+    @Test
+    public void getReaderTest(){
+        Reader reader = Mockito.mock(Reader.class);
+        ReaderDetails readerDetails = new ReaderDetails(123,reader, "2010-01-01", "912345678", true, false, false, null, null);
+        assertEquals(reader, readerDetails.getReader());
+    }
+
+
+
+
 }

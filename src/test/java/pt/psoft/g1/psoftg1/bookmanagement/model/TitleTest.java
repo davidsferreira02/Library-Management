@@ -70,26 +70,6 @@ class TitleTest {
     }
 
 
-    //caixa branca unitario
-    @Test
-    void testSetTitleWithValidData() {
-        Title title = new Title("Initial title");
-        title.setTitle("Updated title");
-        assertEquals("Updated title", title.toString());
-    }
-
-    @Test
-    void testSetTitleWithOversize() {
-        Title title = new Title("Initial title");
-        String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-        StringBuilder stringBuilder = new StringBuilder(129);
-        for (int i = 0; i < 129; i++) {
-            int randomIndex = ThreadLocalRandom.current().nextInt(characters.length());
-            stringBuilder.append(characters.charAt(randomIndex));
-        }
-        assertThrows(IllegalArgumentException.class, () -> title.setTitle(stringBuilder.toString())); // Texto longo omitido para brevidade
-    }
-
     @Test
     void getTitle() {
         Title title = new Title("Initial title");

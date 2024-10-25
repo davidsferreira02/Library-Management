@@ -1,16 +1,22 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.model;
 
+import org.junit.Assert;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.test.util.ReflectionTestUtils;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -131,4 +137,21 @@ class LendingTest {
         assertNull(lending.getReturnedDate());
     }
 
-}
+    @Test
+    public void shouldSpyOnGetFineValueInCents() {
+        Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+       ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(1));
+       ReflectionTestUtils.setField(lending, "returnedDate", LocalDate.now().minusDays(1));
+       assertEquals(Optional.empty(),lending.getFineValueInCents());
+        ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(30));
+        assertNotEquals(Optional.empty(),lending.getFineValueInCents());
+        }
+
+
+
+
+
+    }
+
+
+

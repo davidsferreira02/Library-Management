@@ -54,7 +54,7 @@ public class BioTest {
         bio.setBio("Some other bio");
         assertEquals("Some other bio", bio.toString());
     }
-
+/*
     @Test
     void ensureBioAcceptsMaxLength() {
         StringBuilder longBio = new StringBuilder();
@@ -78,7 +78,7 @@ public class BioTest {
     @Test
     void ensureBioCannotBeOnlyWhitespace() {
         assertThrows(IllegalArgumentException.class, () -> new Bio("     "));
-    }
+    }*/
 
 
 

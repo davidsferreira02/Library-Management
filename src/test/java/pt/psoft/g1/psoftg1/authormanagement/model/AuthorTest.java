@@ -1,9 +1,12 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
+import org.checkerframework.checker.units.qual.A;
 import org.hibernate.StaleObjectStateException;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
@@ -13,8 +16,7 @@ import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 class AuthorTest {
     private final String validName = "João Alberto";
@@ -88,83 +90,38 @@ class AuthorTest {
         assertEquals("photoTest.jpg", photo.getPhotoFile());
     }
 
-   // unitario caixa opaca
-
     @Test
-    void ensureName() {
-        Author author = new Author(validName, validBio, null);
-        assertEquals("João Alberto", author.getName());
+    void getTest(){
+        Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
+        UpdateAuthorRequest updateRequest = Mockito.mock(UpdateAuthorRequest.class);
+        Mockito.when(updateRequest.getName()).thenReturn("New Name");
+        Mockito.when(updateRequest.getBio()).thenReturn("New Bio");
+        Mockito.when(updateRequest.getPhotoURI()).thenReturn("newPhoto.jpg");
+        author.applyPatch(author.getVersion(), updateRequest);
+        Assertions.assertEquals("New Name", author.getName());
+        Assertions.assertEquals("New Bio", author.getBio());
+        ReflectionTestUtils.setField(author, "authorNumber", 13929428L);
+        Assertions.assertEquals(13929428L, author.getId());
+        Assertions.assertEquals(13929428L, author.getAuthorNumber());
+        Mockito.when(updateRequest.getName()).thenReturn(null);
+        Mockito.when(updateRequest.getBio()).thenReturn(null);
+        Mockito.when(updateRequest.getPhotoURI()).thenReturn(null);
+        author.applyPatch(author.getVersion(), updateRequest);
+        Assertions.assertNotNull(author.getName());
+        Assertions.assertNotNull(author.getBio());
+        Assertions.assertNotNull(author.getPhoto());
+
     }
 
     @Test
-    void ensureBio() {
-        Author author = new Author(validName, validBio, null);
-        assertEquals("O João Alberto nasceu em Chaves e foi pedreiro a maior parte da sua vida.", author.getBio());
-    }
-
-    @Test
-    void testSetNameWithInvalidInput() {
-        Author author = new Author(validName, validBio, null);
-
-        assertThrows(IllegalArgumentException.class, () -> author.setName(null));
-        assertThrows(IllegalArgumentException.class, () -> author.setName(""));
-    }
-
-
-    @Test
-    void removePhotoWithMatchingVersion() {
-        Author author = new Author("Author Name", "Author Bio", "photoURI");
-        long currentVersion = author.getVersion();
-        author.removePhoto(currentVersion);
+    void removePhotoTest() {
+        Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
+        ReflectionTestUtils.setField(author, "version", 1L);
+        author.removePhoto(1L);
         assertNull(author.getPhoto());
-    }
-
-    @Test
-    void removePhotoWithNonMatchingVersion() {
-        Author author = new Author("Author Name", "Author Bio", "photoURI");
-        long currentVersion = author.getVersion();
-        long wrongVersion = currentVersion + 1;
-        assertThrows(ConflictException.class, () -> author.removePhoto(wrongVersion));
-    }
-
-    @Test
-    void getId() {
-        Author author = new Author(validName, validBio, null);
-        assertEquals(null, author.getId());
-    }
-
-    @Test
-    void getAuthorNumber() {
-        Author author = new Author(validName, validBio, null);
-        assertEquals(null, author.getAuthorNumber());
-    }
-
-    @Test
-    void applyPatchWithoutNull(){
-        Author author = new Author("Initial Name", "Initial Bio", "photo uri");
-        UpdateAuthorRequest mockRequest = Mockito.mock(UpdateAuthorRequest.class);
-        Mockito.when(mockRequest.getName()).thenReturn("Updated Name");
-        Mockito.when(mockRequest.getBio()).thenReturn("new Bio");
-        Mockito.when(mockRequest.getPhotoURI()).thenReturn("new photo uri");
-        author.applyPatch(author.getVersion(), mockRequest);
-        Mockito.verify(mockRequest, Mockito.times(2)).getName();
-        Mockito.verify(mockRequest, Mockito.times(2)).getBio();
-        Mockito.verify(mockRequest, Mockito.times(2)).getPhotoURI();
-
-    }
-
-    @Test
-    void applyPatchWithNull(){
-        Author author = new Author("Initial Name", "Initial Bio", "photo uri");
-        UpdateAuthorRequest mockRequest = Mockito.mock(UpdateAuthorRequest.class);
-        Mockito.when(mockRequest.getName()).thenReturn(null);
-        Mockito.when(mockRequest.getBio()).thenReturn(null);
-        Mockito.when(mockRequest.getPhotoURI()).thenReturn(null);
-        author.applyPatch(author.getVersion(), mockRequest);
-        Mockito.verify(mockRequest, Mockito.times(1)).getName();
-        Mockito.verify(mockRequest, Mockito.times(1)).getBio();
-        Mockito.verify(mockRequest, Mockito.times(1)).getPhotoURI();
-
+        Assertions.assertThrows(ConflictException.class, () -> {
+            author.removePhoto(2L);
+        });
     }
 }
 

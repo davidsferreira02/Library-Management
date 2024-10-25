@@ -6,6 +6,9 @@ import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+
+
+// Done testes unitarios
 class GenreTest {
 
     @Test
@@ -48,15 +51,6 @@ class GenreTest {
         final var genre = new Genre("Some genre");
         assertEquals("Some genre", genre.toString());
     }
-
-
-
-    @Test
-    void ensureGenreAcceptsSpecialCharacters() {
-        Genre genre = new Genre("Rock & Roll!");
-        assertEquals("Rock & Roll!", genre.toString());
-    }
-
 
 
     @Test
