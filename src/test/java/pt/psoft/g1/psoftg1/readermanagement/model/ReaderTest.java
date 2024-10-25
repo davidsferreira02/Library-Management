@@ -189,6 +189,23 @@ public class ReaderTest {
         assertEquals(reader, readerDetails.getReader());
     }
 
+    @Test
+    public void getBirthDateTest(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
+        assertEquals("2010-1-1", readerDetails.getBirthDate().toString());
+    }
+
+    @Test
+    public void getMarketingConsentTest(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, true, false, null, null);
+        assertTrue(readerDetails.isMarketingConsent());
+    }
+
+    @Test
+    public void isThirdPartySharingConsentTest(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
+        assertFalse(readerDetails.isThirdPartySharingConsent());
+    }
 
 
 

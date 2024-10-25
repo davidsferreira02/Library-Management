@@ -138,7 +138,7 @@ class LendingTest {
     }
 
     @Test
-    public void shouldSpyOnGetFineValueInCents() {
+    public void getFineValueInCents() {
         Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
        ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(1));
        ReflectionTestUtils.setField(lending, "returnedDate", LocalDate.now().minusDays(1));
