@@ -129,7 +129,7 @@ public class ReaderTest {
         Mockito.verify(reader, Mockito.never()).setUsername(Mockito.anyString());
 
         Mockito.verify(readerDetails, Mockito.never()).setMarketingConsent(Mockito.anyBoolean());
-        // UpdateReaderRequest with non-null values
+
         Mockito.when(updateRequest.getPassword()).thenReturn("Password123");
         Mockito.when(updateRequest.getUsername()).thenReturn("Username123");
         Mockito.when(updateRequest.getFullName()).thenReturn("Full Name Updated");

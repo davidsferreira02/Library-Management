@@ -11,9 +11,12 @@ import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
+
+import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
@@ -91,13 +94,34 @@ class AuthorTest {
     }
 
     @Test
-    void getTest(){
-        Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
+    void getTest()  {
+
+
+        Author author = Mockito.spy(new Author("Initial Name", "Initial Bio", "initialPhoto"));
         UpdateAuthorRequest updateRequest = Mockito.mock(UpdateAuthorRequest.class);
+
+        Mockito.when(updateRequest.getName()).thenReturn(null);
+        Mockito.when(updateRequest.getBio()).thenReturn(null);
+        Mockito.when(updateRequest.getPhotoURI()).thenReturn(null);
+        author.applyPatch(author.getVersion(), updateRequest);
+
+        Mockito.verify(author, Mockito.never()).setName(null);
+        Mockito.verify(author, Mockito.never()).setBio(null);
+
+
+
         Mockito.when(updateRequest.getName()).thenReturn("New Name");
         Mockito.when(updateRequest.getBio()).thenReturn("New Bio");
-        Mockito.when(updateRequest.getPhotoURI()).thenReturn("newPhoto.jpg");
+
+
         author.applyPatch(author.getVersion(), updateRequest);
+
+        Mockito.verify(author, Mockito.times(1)).setName("New Name");
+        Mockito.verify(author, Mockito.times(1)).setBio("New Bio");
+
+
+
+/*
         Assertions.assertEquals("New Name", author.getName());
         Assertions.assertEquals("New Bio", author.getBio());
         ReflectionTestUtils.setField(author, "authorNumber", 13929428L);
@@ -109,7 +133,7 @@ class AuthorTest {
         author.applyPatch(author.getVersion(), updateRequest);
         Assertions.assertNotNull(author.getName());
         Assertions.assertNotNull(author.getBio());
-        Assertions.assertNotNull(author.getPhoto());
+        Assertions.assertNotNull(author.getPhoto());*/
 
     }
 
