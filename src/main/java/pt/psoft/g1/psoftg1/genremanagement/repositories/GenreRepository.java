@@ -21,4 +21,5 @@ public interface GenreRepository {
     List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre();
     List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(LocalDate startDate, LocalDate endDate);
     void delete(Genre genre);
+    void deleteAll();
 }
