@@ -62,5 +62,24 @@ class IsbnTest {
     void ensureChecksum10IsCorrect() {
         assertThrows(IllegalArgumentException.class, () -> new Isbn("8175257667"));
     }
+    @Test
+    public void ensureInvalidIsbn10() {
+        String invalidIsbn10 = "1234567890"; // An invalid ISBN-10
+        assertThrows(IllegalArgumentException.class, () -> new Isbn("1234567890"));
+    }
 
+    @Test
+    public void testEqualsAndHashCode() {
+        // Arrange
+        Isbn isbn1 = new Isbn("9782826012092");
+        Isbn isbn2 = new Isbn("9782826012092");
+        Isbn isbn3 = new Isbn("9780306406157");
+
+        // Act & Assert
+        assertEquals(isbn1, isbn2);
+        assertNotEquals(isbn1, isbn3);
+
+        assertEquals(isbn1.hashCode(), isbn2.hashCode());
+        assertNotEquals(isbn1.hashCode(), isbn3.hashCode());
+    }
    }

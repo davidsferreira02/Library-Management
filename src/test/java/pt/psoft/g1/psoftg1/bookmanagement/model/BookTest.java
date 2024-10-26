@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import lombok.NonNull;
+import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -18,6 +19,7 @@ import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -120,6 +122,20 @@ authors.add(validAuthor1);
         assertNull(book.getPhoto());
 
 
+    }
+
+
+    @Test
+    public void testApplyPatchWithStaleObjectStateException() {
+        // Arrange
+        authors.add(validAuthor1);
+        Long desiredVersion = 2L; // Simulating a version mismatch
+        UpdateBookRequest request = mock(UpdateBookRequest.class);
+        Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
+        // Act & Assert
+        assertThrows(StaleObjectStateException.class, () -> {
+            book.applyPatch(desiredVersion, request);
+        });
     }
 
 }
