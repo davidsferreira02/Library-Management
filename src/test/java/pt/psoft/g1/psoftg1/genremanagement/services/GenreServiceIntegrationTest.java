@@ -1,9 +1,8 @@
-package pt.psoft.g1.psoftg1.genremanagement.service;
+package pt.psoft.g1.psoftg1.genremanagement.services;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -11,10 +10,6 @@ import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsPerMonthDTO;
-import pt.psoft.g1.psoftg1.genremanagement.services.GenreServiceImpl;
-import pt.psoft.g1.psoftg1.genremanagement.services.GetAverageLendingsQuery;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
 import java.time.LocalDate;
@@ -84,44 +79,42 @@ public class GenreServiceIntegrationTest {
     }
 
 
+    @Test
+    void GetLendingsAverageDurationPerMonthExceptionTest() {
+        String start = "01-2023-01";
+        String end = "2023-12-31";
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            genreService.getLendingsAverageDurationPerMonth(start, end);
+        });
+
+        assertEquals("Expected format is YYYY-MM-DD", thrown.getMessage());
+    }
+
+    @Test
+    void GetLendingsAverageDurationPerMonthExceptionTest2() {
+        String start = "2023-12-31";
+        String end = "2023-01-01";
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            genreService.getLendingsAverageDurationPerMonth(start, end);
+        });
+
+        assertEquals("Start date cannot be after end date", thrown.getMessage());
+    }
+
+    @Test
+    void GetLendingsAverageDurationPerMonthExceptionTest3() {
+        String start = "2023-01-01";
+        String end = "2023-12-31";
 
 
-@Test
-void GetLendingsAverageDurationPerMonthExceptionTest() {
-    String start = "01-2023-01";
-    String end = "2023-12-31";
+        NotFoundException thrown = assertThrows(NotFoundException.class, () -> {
+            genreService.getLendingsAverageDurationPerMonth(start, end);
+        });
 
-    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-        genreService.getLendingsAverageDurationPerMonth(start, end);
-    });
-
-    assertEquals("Expected format is YYYY-MM-DD", thrown.getMessage());
-}
-
-@Test
-void GetLendingsAverageDurationPerMonthExceptionTest2() {
-    String start = "2023-12-31";
-    String end = "2023-01-01";
-
-    IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-        genreService.getLendingsAverageDurationPerMonth(start, end);
-    });
-
-    assertEquals("Start date cannot be after end date", thrown.getMessage());
-}
-
-@Test
-void GetLendingsAverageDurationPerMonthExceptionTest3() {
-    String start = "2023-01-01";
-    String end = "2023-12-31";
-
-
-    NotFoundException thrown = assertThrows(NotFoundException.class, () -> {
-        genreService.getLendingsAverageDurationPerMonth(start, end);
-    });
-
-    assertEquals("No objects match the provided criteria", thrown.getMessage());
-}
+        assertEquals("No objects match the provided criteria", thrown.getMessage());
+    }
 }
 
 

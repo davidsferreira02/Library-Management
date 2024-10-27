@@ -1,17 +1,19 @@
-package pt.psoft.g1.psoftg1.lendingmanagement.services;
+package pt.psoft.g1.psoftg1.bookmanagement.services;
 
-import org.hibernate.StaleObjectStateException;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+import lombok.NonNull;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
-import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
+import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
@@ -23,29 +25,33 @@ import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
-
-@Transactional
 @SpringBootTest
-class LendingServiceImplTest {
-    @Autowired
-    private LendingService lendingService;
-    @Autowired
-    private LendingRepository lendingRepository;
+public class BookServiceIntegrationTest {
+
     @Autowired
     private ReaderRepository readerRepository;
+
     @Autowired
     private UserRepository userRepository;
+
     @Autowired
-    private BookRepository bookRepository;
+    public AuthorRepository authorRepository;
+
+    @Autowired
+    public BookRepository bookRepository;
+
+    @Autowired
+    public BookService bookService;
+
     @Autowired
     private GenreRepository genreRepository;
+
     @Autowired
-    private AuthorRepository authorRepository;
+    private LendingRepository lendingRepository;
 
     private Lending lending;
     private ReaderDetails readerDetails;
@@ -55,7 +61,7 @@ class LendingServiceImplTest {
     private Genre genre;
 
     @BeforeEach
-    void setUp() {
+    public void setUp(){
         author = new Author("Manuel Antonio Pina",
                 "Manuel António Pina foi um jornalista e escritor português, premiado em 2011 com o Prémio Camões",
                 null);
@@ -83,7 +89,8 @@ class LendingServiceImplTest {
                 true,
                 true,
                 true,
-                null,null);
+                null,
+                null);
         readerRepository.save(readerDetails);
 
         // Create and save the lending
@@ -96,11 +103,10 @@ class LendingServiceImplTest {
                 15,
                 300);
         lendingRepository.save(lending);
-
     }
 
     @AfterEach
-    void tearDown() {
+    public void tearDown(){
         lendingRepository.delete(lending);
         readerRepository.delete(readerDetails);
         userRepository.delete(reader);
@@ -110,84 +116,59 @@ class LendingServiceImplTest {
     }
 
     @Test
-    void testFindByLendingNumber() {
-        assertThat(lendingService.findByLendingNumber(LocalDate.now().getYear() + "/999")).isPresent();
-        assertThat(lendingService.findByLendingNumber(LocalDate.now().getYear() + "/1")).isEmpty();
-    }
-/*
-    @Test
-    void testListByReaderNumberAndIsbn() {
-
-    }
- */
-    @Test
-    void testCreate() {
-        var request = new CreateLendingRequest("9782826012092",
-                LocalDate.now().getYear() + "/1");
-        var lending1 = lendingService.create(request);
-        assertThat(lending1).isNotNull();
-        var lending2 = lendingService.create(request);
-        assertThat(lending2).isNotNull();
-        var lending3 = lendingService.create(request);
-        assertThat(lending3).isNotNull();
-
-        // 4th lending
-        assertThrows(LendingForbiddenException.class, () -> lendingService.create(request));
-
-        lendingRepository.delete(lending3);
-        lendingRepository.save(Lending.newBootstrappingLending(book,
-                readerDetails,
-                2024,
-                997,
-                LocalDate.of(2024, 3,1),
-                null,
-                15,
-                300));
-
-        // Having an overdue lending
-        assertThrows(LendingForbiddenException.class, () -> lendingService.create(request));
-
+    public void testCreate(){
+        List<Long> authors = new ArrayList<>();
+        authors.add(author.getAuthorNumber());
+        Book book1 = bookService.create(new CreateBookRequest("Description1", "Title1", "Género", null, null,authors), "9789722328296");
+        assertNotNull(book1);
+        assertEquals(book1.getIsbn(), bookRepository.findByIsbn(book1.getIsbn()).get().getIsbn());
+        bookRepository.delete(book1);
+        assertTrue(bookRepository.findByIsbn(book1.getIsbn()).isEmpty());
     }
 
     @Test
-    void testSetReturned() {
-        int year = 2024, seq = 888;
-        var notReturnedLending = lendingRepository.save(Lending.newBootstrappingLending(book,
-                readerDetails,
-                year,
-                seq,
-                LocalDate.of(2024, 3,1),
-                null,
-                15,
-                300));
-        var request = new SetLendingReturnedRequest(null);
-        assertThrows(StaleObjectStateException.class,
-                () -> lendingService.setReturned(year + "/" + seq, request, (notReturnedLending.getVersion()-1)));
-
-        assertDoesNotThrow(
-                () -> lendingService.setReturned(year + "/" + seq, request, notReturnedLending.getVersion()));
+    public void testUpdate(){
+        List<Long> authors = new ArrayList<>();
+        authors.add(author.getAuthorNumber());
+        List<Author> authorsBook = List.of(author);
+        Book newBook = new Book("9789896378905","Title","Description", genre, authorsBook, null);
+        bookRepository.save(newBook);
+        bookService.update(new UpdateBookRequest(newBook.getIsbn(), "Updated Title", genre.toString(), authors, newBook.getDescription()), newBook.getVersion().toString());
+        Book updatedBook = bookRepository.findByIsbn(newBook.getIsbn()).get();
+        assertEquals("Updated Title", updatedBook.getTitle().toString());
+        bookRepository.delete(updatedBook);
+        assertTrue(bookRepository.findByIsbn("9789896378905").isEmpty());
     }
 
     @Test
-    public void testSearchLendings(){
-        Page page = new Page(1,10);
-        SearchLendingQuery searchLendingQuery = new SearchLendingQuery(readerDetails.getReaderNumber(),
-                book.getIsbn(),
-                null,
-                "wrong date",
-                "wrong");
-
-        assertThrows(IllegalArgumentException.class, () ->lendingService.searchLendings(page, searchLendingQuery));
-    }
-
-/*
-    @Test
-    void testGetAverageDuration() {
+    public void testFindByGenre(){
+        assertEquals(bookService.findByGenre(genre.getGenre()).get(0).getIsbn(), bookRepository.findByGenre(genre.getGenre()).get(0).getIsbn());
     }
 
     @Test
-    void testGetOverdue() {
+    public void testFindByIsbn(){
+        assertEquals(bookService.findByIsbn(book.getIsbn()).getIsbn(), bookRepository.findByIsbn(book.getIsbn()).get().getIsbn());
     }
 
- */
+    @Test
+    public void testFindByTitle(){
+        assertEquals(bookService.findByTitle(book.getTitle().toString()).get(0).getIsbn(), bookRepository.findByTitle(book.getTitle().toString()).get(0).getIsbn());
+    }
+
+    @Test
+    public void testRemoveBookPhoto(){
+        assertThrows(NotFoundException.class, () -> bookService.removeBookPhoto(book.getIsbn(), book.getVersion()));
+    }
+
+    @Test
+    public void testFindTop5BooksLent(){
+        assertEquals(bookService.findTop5BooksLent().size(),1);
+    }
+
+    @Test
+    public void testSearchBooks(){
+        Page page = new Page(1, 5);
+        assertEquals(bookService.searchBooks(page, new SearchBooksQuery(book.getTitle().toString(), book.getGenre().toString(),author.getName())).size(),1);
+    }
+
 }

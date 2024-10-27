@@ -1,8 +1,13 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.repositories;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
+import jakarta.persistence.criteria.*;
+import org.apache.catalina.core.ApplicationContext;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,6 +18,8 @@ import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.lendingmanagement.services.LendingService;
+import pt.psoft.g1.psoftg1.lendingmanagement.services.SearchLendingQuery;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -21,11 +28,13 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @Transactional
 @SpringBootTest
@@ -227,4 +236,21 @@ public class LendingRepositoryIntegrationTest {
         assertThat(overdueLendings).contains(notReturnedLending);
         assertThat(overdueLendings).doesNotContain(notReturnedAndNotOverdueLending);
     }
+
+    @Test
+    public void testSearchLendings(){
+        Page page = new Page(1,10);
+        SearchLendingQuery searchLendingQuery = new SearchLendingQuery(readerDetails.getReaderNumber(),
+                book.getIsbn(),
+                null,
+                null,
+                null);
+
+        List<Lending> lendings = lendingRepository.searchLendings(page, readerDetails.getReaderNumber(), book.getIsbn(), null, null, null);
+
+        assertNotNull(lendings);
+        assertEquals(lendings.get(0).getLendingNumber(), lending.getLendingNumber(), "Lending number should be same");
+        assertEquals(lendings.get(0).getLendingNumber(), lending.getLendingNumber(), "Lending number should be same");
+    }
+
 }

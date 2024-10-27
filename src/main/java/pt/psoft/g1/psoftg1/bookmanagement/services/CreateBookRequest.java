@@ -13,6 +13,7 @@ import java.util.List;
 @Getter
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 @Schema(description = "A DTO for creating a Book")
 public class CreateBookRequest {
 

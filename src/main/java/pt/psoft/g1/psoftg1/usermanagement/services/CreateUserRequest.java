@@ -34,6 +34,7 @@ import lombok.*;
  */
 @Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class CreateUserRequest {
 	@NonNull
 	@NotBlank
