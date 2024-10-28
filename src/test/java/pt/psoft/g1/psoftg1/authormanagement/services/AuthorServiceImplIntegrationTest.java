@@ -115,7 +115,7 @@ public class AuthorServiceImplIntegrationTest {
         Optional<Author> updatedAuthor = authorService.removeAuthorPhoto(author.getAuthorNumber(), author.getVersion());
       Assert.assertNull(updatedAuthor.get().getPhoto());
 
-        // Verify the photo no longer e
+
     }
 
 
