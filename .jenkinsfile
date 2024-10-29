@@ -1,12 +1,5 @@
 pipeline {
     agent any
-    tools {
-        maven 'Maven' // Nome da configuração do Maven nas Ferramentas Globais do Jenkins
-        sonarQube 'SonarQube' // Nome do SonarQube Scanner configurado nas Ferramentas Globais
-    }
-    environment {
-        SONARQUBE_SERVER = 'SonarQubeServer' // Nome do servidor SonarQube configurado em Jenkins
-    }
     stages {
 
         stage('Build') {
@@ -27,17 +20,6 @@ pipeline {
             steps {
                 sh 'echo "Running Unit Tests..."'
                 sh 'mvn test'
-            }
-        }
-
-        stage('Static Code Analysis') {
-            steps {
-                script {
-                    withSonarQubeEnv('SonarQubeServer') {
-                        sh 'echo "Running SonarQube analysis..."'
-                        sh 'mvn sonar:sonar'
-                    }
-                }
             }
         }
 
