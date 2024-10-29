@@ -24,6 +24,7 @@ import static java.lang.String.format;
 import static java.util.stream.Collectors.joining;
 
 import java.time.Instant;
+import java.util.Map;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,11 +37,9 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
 import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import pt.psoft.g1.psoftg1.auth.service.GoogleIAMService;
 import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
 import pt.psoft.g1.psoftg1.usermanagement.api.UserViewMapper;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
@@ -68,6 +67,8 @@ public class AuthApi {
 	private final UserViewMapper userViewMapper;
 
 	private final UserService userService;
+
+	private final GoogleIAMService googleIAMService;
 
 	@PostMapping("login")
 	public ResponseEntity<UserView> login(@RequestBody @Valid final AuthRequest request) {
@@ -108,5 +109,35 @@ public class AuthApi {
 		final var user = userService.create(request);
 		return userViewMapper.toUserView(user);
 	}
+
+	@PostMapping("login/google")
+	public ResponseEntity<UserView> googleLogin(@RequestBody Map<String, String> requestBody) {
+		try {
+			String authorizationCode = requestBody.get("authorizationCode");
+			if (authorizationCode == null || authorizationCode.isEmpty()) {
+				throw new IllegalArgumentException("Código de autorização não fornecido.");
+			}
+			User user = googleIAMService.authenticate(authorizationCode);
+			String jwtToken = googleIAMService.generateJwtToken(user);
+			return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken).body(userViewMapper.toUserView(user));
+		}catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
+		}
+	}
+
+
+	@GetMapping("/login/oauth2/code/google")
+	public ResponseEntity<String> handleGoogleCallback(@RequestParam("code") String code) {
+		try {
+			User authenticatedUser = googleIAMService.authenticate(code);
+			String jwtToken = googleIAMService.generateJwtToken(authenticatedUser);
+
+			return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken).body("Autenticação bem-sucedida!");
+		} catch (Exception e) {
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falha na autenticação com o Google.");
+		}
+	}
+
+
 
 }
