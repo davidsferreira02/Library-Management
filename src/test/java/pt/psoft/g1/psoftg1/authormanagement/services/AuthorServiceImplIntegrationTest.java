@@ -35,8 +35,7 @@ public class AuthorServiceImplIntegrationTest {
     @Autowired
     private BookRepository bookRepository;
 
-    @Autowired
-    private PhotoRepository photoRepository;
+
 
 
     @BeforeEach

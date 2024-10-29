@@ -17,6 +17,9 @@ public interface SpringDataPhotoRepository extends PhotoRepository, CrudReposito
             "FROM Photo p " +
             "WHERE p.pk = :photo_id")
     Optional<Photo> findById(@Param("photo_id") long id);*/
+
+
+
     @Override
     @Modifying
     @Transactional
@@ -24,4 +27,5 @@ public interface SpringDataPhotoRepository extends PhotoRepository, CrudReposito
             "FROM Photo p " +
             "WHERE p.photoFile = :photoFile")
     void deleteByPhotoFile(String photoFile);
+
 }
