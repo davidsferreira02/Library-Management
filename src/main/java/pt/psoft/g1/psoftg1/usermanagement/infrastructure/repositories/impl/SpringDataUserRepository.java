@@ -32,6 +32,7 @@ import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
@@ -50,6 +51,7 @@ import lombok.RequiredArgsConstructor;
  */
 @Repository
 @CacheConfig(cacheNames = "users")
+@Profile("sqlserver")
 public interface SpringDataUserRepository extends UserRepository, UserRepoCustom, CrudRepository<User, Long> {
 
 	@Override

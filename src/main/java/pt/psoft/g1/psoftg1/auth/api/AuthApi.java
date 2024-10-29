@@ -127,7 +127,7 @@ public class AuthApi {
 
 
 	@GetMapping("/login/oauth2/code/google")
-	public ResponseEntity<String> handleGoogleCallback(@RequestParam("code") String code) {
+	public ResponseEntity<String> Token(@RequestParam("code") String code) {
 		try {
 			User authenticatedUser = googleIAMService.authenticate(code);
 			String jwtToken = googleIAMService.generateJwtToken(authenticatedUser);

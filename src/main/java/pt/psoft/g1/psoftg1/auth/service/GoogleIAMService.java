@@ -4,6 +4,7 @@ import com.nimbusds.oauth2.sdk.ParseException;
 import com.nimbusds.oauth2.sdk.token.BearerAccessToken;
 import com.nimbusds.oauth2.sdk.util.JSONObjectUtils;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.*;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;
 import org.springframework.security.oauth2.jwt.JwtEncoder;
@@ -24,6 +25,7 @@ import java.time.Instant;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Profile("google")
 @Service("googleIAMService")
 public class GoogleIAMService implements IAMService {
 
@@ -55,8 +57,7 @@ public class GoogleIAMService implements IAMService {
         return userService.findByUsername(googleUser.getUsername()).orElseGet(() ->   userService.create(new CreateUserRequest(googleUser.getUsername(), googleUser.getName().toString(), "OAuthDummyPassword")));
     }
 
-    private BearerAccessToken exchangeAuthorizationCodeForAccessToken(String authorizationCode) throws ParseException {
-        // Montar o corpo da requisição para obter o token de acesso
+    private BearerAccessToken exchangeAuthorizationCodeForAccessToken(String authorizationCode) {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);
 
@@ -74,7 +75,7 @@ public class GoogleIAMService implements IAMService {
                 return new BearerAccessToken((String) responseBody.get("access_token"));
             } else {
                 System.out.println("Erro na resposta da Google: " + response.getBody());
-                throw new RuntimeException("Falha ao obter o token de acesso do Google: " + response.getStatusCode());
+                throw new RuntimeException("Falha a obter o token de acesso do Google: " + response.getStatusCode());
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -85,12 +86,12 @@ public class GoogleIAMService implements IAMService {
 
 
         private User fetchUserInfo(String accessToken) {
-        // Configurar o cabeçalho para obter os dados do utilizador
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
         HttpEntity<String> entity = new HttpEntity<>(headers);
 
-        // Fazer a requisição para o endpoint do Google e obter as informações do utilizador
+
         ResponseEntity<Map> response = restTemplate.exchange(
                 URI.create(userInfoUri),
                 HttpMethod.GET,
@@ -105,7 +106,7 @@ public class GoogleIAMService implements IAMService {
                 throw new RuntimeException("Email não encontrado na resposta do Google.");
             }
 
-            User googleUser = new User(email, "OAuthDummyPassword");
+            User googleUser = new User(email, "OAuthDummyPassword123");
             String name = (String) userInfo.get("name");
             if (name != null && !name.isEmpty()) {
                 googleUser.setName(new Name(name).toString());
@@ -119,7 +120,7 @@ public class GoogleIAMService implements IAMService {
 
     public String generateJwtToken(User user) {
         final Instant now = Instant.now();
-        final long expiry = 3600L; //tempo do token demora para ser expirado
+        final long expiry = 3600L;
 
         final String scope = user.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
@@ -136,8 +137,6 @@ public class GoogleIAMService implements IAMService {
         return this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
     }
 
-    public String getjwtToken(User user) {
-        return generateJwtToken(user);
-    }
+
 
 }
