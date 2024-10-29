@@ -110,28 +110,11 @@ public class AuthApi {
 		return userViewMapper.toUserView(user);
 	}
 
-	@PostMapping("login/google")
-	public ResponseEntity<UserView> googleLogin(@RequestBody Map<String, String> requestBody) {
-		try {
-			String authorizationCode = requestBody.get("authorizationCode");
-			if (authorizationCode == null || authorizationCode.isEmpty()) {
-				throw new IllegalArgumentException("Código de autorização não fornecido.");
-			}
-			User user = googleIAMService.authenticate(authorizationCode);
-			String jwtToken = googleIAMService.generateJwtToken(user);
-			return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken).body(userViewMapper.toUserView(user));
-		}catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-		}
-	}
-
-
 	@GetMapping("/login/oauth2/code/google")
 	public ResponseEntity<String> Token(@RequestParam("code") String code) {
 		try {
 			User authenticatedUser = googleIAMService.authenticate(code);
 			String jwtToken = googleIAMService.generateJwtToken(authenticatedUser);
-
 			return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken).body("Autenticação bem-sucedida!");
 		} catch (Exception e) {
 			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falha na autenticação com o Google.");

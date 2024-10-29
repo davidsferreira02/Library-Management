@@ -54,7 +54,9 @@ public class GoogleIAMService implements IAMService {
 
         BearerAccessToken accessToken = exchangeAuthorizationCodeForAccessToken(authorizationCode);
         User googleUser = fetchUserInfo(accessToken.getValue());
-        return userService.findByUsername(googleUser.getUsername()).orElseGet(() ->   userService.create(new CreateUserRequest(googleUser.getUsername(), googleUser.getName().toString(), "OAuthDummyPassword")));
+        CreateUserRequest createUserRequest= new CreateUserRequest(googleUser.getUsername(), googleUser.getName().toString(), googleUser.getPassword());
+        createUserRequest.setRole("READER");
+        return userService.findByUsername(googleUser.getUsername()).orElseGet(() ->   userService.create(createUserRequest));
     }
 
     private BearerAccessToken exchangeAuthorizationCodeForAccessToken(String authorizationCode) {
@@ -63,12 +65,16 @@ public class GoogleIAMService implements IAMService {
 
         String requestBody = String.format(
                 "code=%s&client_id=%s&client_secret=%s&redirect_uri=%s&grant_type=authorization_code",
-                URLEncoder.encode(authorizationCode, StandardCharsets.UTF_8), clientId, clientSecret, "http://localhost:8080/login/oauth2/code/google");
-
+                URLEncoder.encode(authorizationCode, StandardCharsets.UTF_8),
+                URLEncoder.encode(clientId, StandardCharsets.UTF_8),
+                URLEncoder.encode(clientSecret, StandardCharsets.UTF_8),
+                URLEncoder.encode("http://localhost:8080/login/oauth2/code/google", StandardCharsets.UTF_8)
+        );
         HttpEntity<String> request = new HttpEntity<>(requestBody, headers);
 
         try {
-            ResponseEntity<String> response = restTemplate.postForEntity(URI.create(tokenUri), request, String.class);
+            URI uri = URI.create(tokenUri);
+            ResponseEntity<String> response = restTemplate.postForEntity(uri, request, String.class);
 
             if (response.getStatusCode() == HttpStatus.OK && response.getBody() != null) {
                 Map<String, Object> responseBody = JSONObjectUtils.parse(response.getBody());
