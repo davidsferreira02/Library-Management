@@ -117,6 +117,7 @@ public class SecurityConfig {
              //   .requestMatchers(HttpMethod.GET, "/api/public/login/oauth2/code/google").permitAll()//unregistered should be able to register
                 // Our private endpoints
                 //authors
+
                 .requestMatchers(HttpMethod.POST,"/api/authors").hasRole(Role.LIBRARIAN)
                 .requestMatchers(HttpMethod.PATCH,"/api/authors/{authorNumber}").hasRole(Role.LIBRARIAN)
                 .requestMatchers(HttpMethod.GET,"/api/authors/{authorNumber}").hasAnyRole(Role.READER, Role.LIBRARIAN)

@@ -2,12 +2,13 @@ package pt.psoft.g1.psoftg1.authormanagement.model;
 
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 
 import java.util.UUID;
-
+//@Bean
 @Component
 public class IdGenerator {
 

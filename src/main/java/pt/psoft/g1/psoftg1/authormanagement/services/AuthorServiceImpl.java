@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.authormanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -25,6 +26,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
 
+    @Autowired
     private IdGenerator idGenerator;
     @Override
     public Iterable<Author> findAll() {
@@ -62,8 +64,8 @@ public class AuthorServiceImpl implements AuthorService {
             resource.setPhoto(null);
             resource.setPhotoURI(null);
         }
+        resource.setAuthorNumber(idGenerator.generateUniqueHex24(authorRepository));
         final Author author = mapper.create(resource);
-        author.setAuthorNumber(idGenerator.generateUniqueHex24(authorRepository));
         return authorRepository.save(author);
     }
 
