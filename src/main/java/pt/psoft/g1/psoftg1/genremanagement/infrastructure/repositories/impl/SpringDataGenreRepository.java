@@ -6,6 +6,7 @@ import jakarta.persistence.TypedQuery;
 import jakarta.persistence.criteria.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -22,6 +23,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import java.time.LocalDate;
 import java.util.*;
 
+@Profile("sqlserver")
 public interface SpringDataGenreRepository extends GenreRepository, GenreRepoCustom, CrudRepository<Genre, Integer> {
 
     @Query("SELECT g FROM Genre g")
@@ -41,12 +43,15 @@ public interface SpringDataGenreRepository extends GenreRepository, GenreRepoCus
 }
 
 
+
 interface GenreRepoCustom{
     List<GenreLendingsPerMonthDTO> getLendingsPerMonthLastYearByGenre();
     List<GenreLendingsDTO> getAverageLendingsInMonth(LocalDate month, pt.psoft.g1.psoftg1.shared.services.Page page);
     List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(LocalDate startDate, LocalDate endDate);
 
 }
+
+
 
 @RequiredArgsConstructor
 class GenreRepoCustomImpl implements GenreRepoCustom {
