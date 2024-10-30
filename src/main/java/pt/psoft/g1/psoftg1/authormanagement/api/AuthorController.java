@@ -62,6 +62,7 @@ public class AuthorController {
             resource.setPhotoURI(fileName);
         }
 
+
         final var author = authorService.create(resource);
 
         final var newauthorUri = ServletUriComponentsBuilder.fromCurrentRequestUri()

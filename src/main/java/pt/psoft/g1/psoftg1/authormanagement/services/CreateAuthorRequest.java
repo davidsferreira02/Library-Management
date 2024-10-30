@@ -13,6 +13,11 @@ import org.springframework.web.multipart.MultipartFile;
 @Schema(description = "A DTO for creating a Author")
 public class CreateAuthorRequest {
 
+
+
+   @Size(min = 24, max = 24)
+   private String authorNumber;
+
     @Size(min = 1, max = 150)
     private String name;
 

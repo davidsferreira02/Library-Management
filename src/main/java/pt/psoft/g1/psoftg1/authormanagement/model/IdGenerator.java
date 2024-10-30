@@ -11,15 +11,11 @@ import java.util.UUID;
 @Component
 public class IdGenerator {
 
-
-    @Autowired
-    private AuthorRepository authorRepository;
-    @Profile("24Hex")
-    public String generateUniqueHex24() {
+    public String generateUniqueHex24(AuthorRepository authorRepository) {
         String uniqueId;
         do {
             uniqueId = UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-        } while (authorRepository.findByAuthorNumber(uniqueId).isPresent());
+        } while (authorRepository.findByAuthorNumber(uniqueId).isPresent());;
         return uniqueId;
     }
 }

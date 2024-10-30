@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.model.IdGenerator;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
@@ -24,6 +25,7 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
 
+    private IdGenerator idGenerator;
     @Override
     public Iterable<Author> findAll() {
         return authorRepository.findAll();
@@ -53,6 +55,7 @@ public class AuthorServiceImpl implements AuthorService {
          * - photo = validFile && photoURI = validString -> photo is set
          * */
 
+
         MultipartFile photo = resource.getPhoto();
         String photoURI = resource.getPhotoURI();
         if(photo == null && photoURI != null || photo != null && photoURI == null) {
@@ -60,6 +63,7 @@ public class AuthorServiceImpl implements AuthorService {
             resource.setPhotoURI(null);
         }
         final Author author = mapper.create(resource);
+        author.setAuthorNumber(idGenerator.generateUniqueHex24(authorRepository));
         return authorRepository.save(author);
     }
 
