@@ -11,10 +11,9 @@ import pt.psoft.g1.psoftg1.shared.model.Name;
 @Entity
 public class Author extends EntityWithPhoto {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "AUTHOR_NUMBER")
     @Getter
-    private Long authorNumber;
+    private String authorNumber;
 
     @Version
     private long version;
@@ -37,11 +36,12 @@ public class Author extends EntityWithPhoto {
         return version;
     }
 
-    public Long getId() {
+    public String getId() {
         return authorNumber;
     }
 
-    public Author(String name, String bio, String photoURI) {
+    public Author(String authorNumber,String name, String bio, String photoURI) {
+        this.authorNumber = authorNumber;
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);

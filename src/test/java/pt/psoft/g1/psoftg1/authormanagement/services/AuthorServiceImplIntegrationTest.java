@@ -51,7 +51,7 @@ public class AuthorServiceImplIntegrationTest {
 
     @Test
     public void whenValidId_thenAuthorShouldBeFound() {
-        Long id = 1L;
+        String id = "1L";
         Optional<Author> found = authorService.findByAuthorNumber(id);
         found.ifPresent(author -> assertThat(author.getId()).isEqualTo(id));
     }
@@ -92,7 +92,7 @@ public class AuthorServiceImplIntegrationTest {
 
     @Test
     public void findBooksByAuthorNumberTest() {
-        Assert.assertEquals(authorService.findBooksByAuthorNumber(1L), bookRepository.findBooksByAuthorNumber(1L));
+        Assert.assertEquals(authorService.findBooksByAuthorNumber("1L"), bookRepository.findBooksByAuthorNumber("1L"));
     }
 
     @Test
