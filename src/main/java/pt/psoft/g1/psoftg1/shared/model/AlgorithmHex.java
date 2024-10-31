@@ -7,7 +7,7 @@ import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import java.util.UUID;
 
 
-@Component("algorithmHex")
+@Component("AlgorithmHex")
 public class AlgorithmHex implements AlgorithmId {
 
     @Override

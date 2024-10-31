@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class IDGeneratorFactory {
 
-    private AlgorithmId algorithmId;
+    private AlgorithmId algorithmId ;
 
     @Value("${algorithm}")
     private String algorithmName;
