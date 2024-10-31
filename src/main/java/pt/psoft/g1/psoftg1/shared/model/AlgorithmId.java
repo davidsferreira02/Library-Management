@@ -6,5 +6,5 @@ import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 
 public interface AlgorithmId {
 
-    String generateId();
+    String generateId(String algorithmName);
 }

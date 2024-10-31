@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.bootstrapping;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Profile;
@@ -48,7 +49,8 @@ public class Bootstrapper implements CommandLineRunner {
 
     private final ForbiddenNameService forbiddenNameService;
 
-private final IDGeneratorFactory idGeneratorFactory= new IDGeneratorFactory();
+    @Autowired
+private  IDGeneratorFactory idGeneratorFactory;
 
 
 
