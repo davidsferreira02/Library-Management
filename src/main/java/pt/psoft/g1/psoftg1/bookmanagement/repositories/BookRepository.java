@@ -29,5 +29,5 @@ public interface BookRepository {
 
     Book save(Book book);
     void delete(Book book);
-    List<Book> findTopBooksByGenreList(List<String> genreList, int numberOfBooks);
+    List<BookCountDTO> findTopBooksByGenre(@Param("genre") String genre, Pageable pageable);
 }

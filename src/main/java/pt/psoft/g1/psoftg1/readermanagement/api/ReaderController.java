@@ -346,9 +346,9 @@ class ReaderController {
 
     @GetMapping("/recommendation")
     public ResponseEntity<List<BookView>> recommendation() {
-        List<Book> recommendedBooks = readerService.recommendation();  // Exemplo: recomendação de 5 livros
+        List<Book> recommendedBooks = readerService.recommendation();
 
-        // Converte a lista de Book para BookView usando um mapper
+
         List<BookView> recommendedBooksView = bookViewMapper.toBookView(recommendedBooks);
 
         return ResponseEntity.ok(recommendedBooksView);
