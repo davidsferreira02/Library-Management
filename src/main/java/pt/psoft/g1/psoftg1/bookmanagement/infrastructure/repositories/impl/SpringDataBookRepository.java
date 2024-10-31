@@ -75,6 +75,7 @@ public interface SpringDataBookRepository  extends BookRepository, BookRepoCusto
 
 interface BookRepoCustom {
     List<Book> searchBooks(pt.psoft.g1.psoftg1.shared.services.Page page, SearchBooksQuery query);
+    List<Book> findTopBooksByGenreList(List<String> genreList, int numberOfBooks);
 
 }
 
@@ -117,5 +118,28 @@ class BookRepoCustomImpl implements BookRepoCustom {
         q.setMaxResults(page.getLimit());
 
         return q.getResultList();
+    }
+
+    @Override
+    public List<Book> findTopBooksByGenreList(List<String> genreList, int numberOfBooks) {
+        CriteriaBuilder cb = em.getCriteriaBuilder();
+        CriteriaQuery<Book> cq = cb.createQuery(Book.class);
+        Root<Book> root = cq.from(Book.class);
+        Join<Book, Genre> genreJoin = root.join("genre");
+
+        cq.select(root);
+
+        // Restrição para gêneros na lista
+        Predicate genrePredicate = genreJoin.get("genre").in(genreList);
+        cq.where(genrePredicate);
+
+        // Agrupar por gênero e ordenar pela contagem de empréstimos
+        cq.groupBy(genreJoin.get("pk"), root.get("title"));
+        cq.orderBy(cb.desc(cb.count(root.get("lending"))));
+
+        TypedQuery<Book> query = em.createQuery(cq);
+        query.setMaxResults(numberOfBooks * genreList.size());
+
+        return query.getResultList();
     }
 }

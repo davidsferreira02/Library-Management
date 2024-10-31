@@ -72,4 +72,6 @@ public abstract class BookViewMapper extends MapperInterface {
         String isbn = book.getIsbn();
         return ServletUriComponentsBuilder.fromCurrentContextPath().path("/api/books/{isbn}/photo").buildAndExpand(isbn).toUri().toString();
     }
+
+
 }

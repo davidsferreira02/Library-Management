@@ -22,6 +22,9 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+import pt.psoft.g1.psoftg1.bookmanagement.api.BookView;
+import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewMapper;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.external.service.ApiNinjasService;
 import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingView;
@@ -61,11 +64,12 @@ class ReaderController {
     private final ConcurrencyService concurrencyService;
     private final FileStorageService fileStorageService;
     private final ApiNinjasService apiNinjasService;
+    private final BookViewMapper bookViewMapper;
 
     @Operation(summary = "Gets the reader data if authenticated as Reader or all readers if authenticated as Librarian")
-    @ApiResponse(description = "Success", responseCode = "200", content = { @Content(mediaType = "application/json",
+    @ApiResponse(description = "Success", responseCode = "200", content = {@Content(mediaType = "application/json",
             // Use the `array` property instead of `schema`
-            array = @ArraySchema(schema = @Schema(implementation = ReaderView.class))) })
+            array = @ArraySchema(schema = @Schema(implementation = ReaderView.class)))})
     @GetMapping
     public ResponseEntity<?> getData(Authentication authentication) {
         User loggedUser = userService.getAuthenticatedUser(authentication);
@@ -81,19 +85,17 @@ class ReaderController {
     }
 
     @Operation(summary = "Gets reader by number")
-    @ApiResponse(description = "Success", responseCode = "200", content = { @Content(mediaType = "application/json",
+    @ApiResponse(description = "Success", responseCode = "200", content = {@Content(mediaType = "application/json",
             // Use the `array` property instead of `schema`
-            array = @ArraySchema(schema = @Schema(implementation = ReaderView.class))) })
-    @GetMapping(value="/{year}/{seq}")
+            array = @ArraySchema(schema = @Schema(implementation = ReaderView.class)))})
+    @GetMapping(value = "/{year}/{seq}")
     //This is just for testing purposes, therefore admin role has been set
     //@RolesAllowed(Role.LIBRARIAN)
     public ResponseEntity<ReaderQuoteView> findByReaderNumber(@PathVariable("year")
-                                                           @Parameter(description = "The year of the Reader to find")
-                                                           final Integer year,
-                                                       @PathVariable("seq")
-                                                           @Parameter(description = "The sequencial of the Reader to find")
-                                                           final Integer seq) {
-        String readerNumber = year+"/"+seq;
+                                                              @Parameter(description = "The year of the Reader to find") final Integer year,
+                                                              @PathVariable("seq")
+                                                              @Parameter(description = "The sequencial of the Reader to find") final Integer seq) {
+        String readerNumber = year + "/" + seq;
         final var readerDetails = readerService.findByReaderNumber(readerNumber)
                 .orElseThrow(() -> new NotFoundException("Could not find reader from specified reader number"));
 
@@ -113,9 +115,9 @@ class ReaderController {
     @GetMapping(params = "phoneNumber")
     public ListResponse<ReaderView> findByPhoneNumber(@RequestParam(name = "phoneNumber", required = false) final String phoneNumber) {
 
-        List<ReaderDetails> readerDetailsList  = readerService.findByPhoneNumber(phoneNumber);
+        List<ReaderDetails> readerDetailsList = readerService.findByPhoneNumber(phoneNumber);
 
-        if(readerDetailsList.isEmpty()) {
+        if (readerDetailsList.isEmpty()) {
             throw new NotFoundException(ReaderDetails.class, phoneNumber);
         }
 
@@ -128,29 +130,27 @@ class ReaderController {
         List<User> userList = this.userService.findByNameLike(name);
         List<ReaderDetails> readerDetailsList = new ArrayList<>();
 
-        for(User user : userList) {
+        for (User user : userList) {
             Optional<ReaderDetails> readerDetails = this.readerService.findByUsername(user.getUsername());
-            if(readerDetails.isPresent()) {
+            if (readerDetails.isPresent()) {
                 readerDetailsList.add(readerDetails.get());
             }
         }
 
-        if(readerDetailsList.isEmpty()) {
+        if (readerDetailsList.isEmpty()) {
             throw new NotFoundException("Could not find reader with name: " + name);
         }
 
         return new ListResponse<>(readerViewMapper.toReaderView(readerDetailsList));
     }
 
-    @Operation(summary= "Gets a reader photo")
+    @Operation(summary = "Gets a reader photo")
     @GetMapping("/{year}/{seq}/photo")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<byte[]> getSpecificReaderPhoto(@PathVariable("year")
-                                                     @Parameter(description = "The year of the Reader to find")
-                                                     final Integer year,
-                                                 @PathVariable("seq")
-                                                     @Parameter(description = "The sequencial of the Reader to find")
-                                                     final Integer seq,
+                                                         @Parameter(description = "The year of the Reader to find") final Integer year,
+                                                         @PathVariable("seq")
+                                                         @Parameter(description = "The sequencial of the Reader to find") final Integer seq,
                                                          Authentication authentication) {
         User loggedUser = userService.getAuthenticatedUser(authentication);
 
@@ -169,7 +169,7 @@ class ReaderController {
         ReaderDetails readerDetails = readerService.findByReaderNumber(year + "/" + seq).orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
 
         //In case the user has no photo, just return a 200 OK without body
-        if(readerDetails.getPhoto() == null) {
+        if (readerDetails.getPhoto() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
@@ -177,14 +177,14 @@ class ReaderController {
         byte[] image = this.fileStorageService.getFile(photoFile);
         String fileFormat = this.fileStorageService.getExtension(readerDetails.getPhoto().getPhotoFile()).orElseThrow(() -> new ValidationException("Unable to get file extension"));
 
-        if(image == null) {
+        if (image == null) {
             return ResponseEntity.ok().build();
         }
 
         return ResponseEntity.ok().contentType(fileFormat.equals("png") ? MediaType.IMAGE_PNG : MediaType.IMAGE_JPEG).body(image);
     }
 
-    @Operation(summary= "Gets a reader photo")
+    @Operation(summary = "Gets a reader photo")
     @GetMapping("/photo")
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<byte[]> getReaderOwnPhoto(Authentication authentication) {
@@ -192,20 +192,20 @@ class ReaderController {
         User loggedUser = userService.getAuthenticatedUser(authentication);
 
         Optional<ReaderDetails> optReaderDetails = readerService.findByUsername(loggedUser.getUsername());
-        if(optReaderDetails.isEmpty()) {
+        if (optReaderDetails.isEmpty()) {
             throw new AccessDeniedException("Could not find a valid reader from current auth");
         }
 
         ReaderDetails readerDetails = optReaderDetails.get();
 
         //In case the user has no photo, just return a 200 OK without body
-        if(readerDetails.getPhoto() == null) {
+        if (readerDetails.getPhoto() == null) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
 
         byte[] image = this.fileStorageService.getFile(readerDetails.getPhoto().getPhotoFile());
 
-        if(image == null) {
+        if (image == null) {
             return ResponseEntity.ok().build();
         }
 
@@ -239,13 +239,13 @@ class ReaderController {
         User loggedUser = userService.getAuthenticatedUser(authentication);
 
         Optional<ReaderDetails> optReaderDetails = readerService.findByUsername(loggedUser.getUsername());
-        if(optReaderDetails.isEmpty()) {
+        if (optReaderDetails.isEmpty()) {
             throw new AccessDeniedException("Could not find a valid reader from current auth");
         }
 
         ReaderDetails readerDetails = optReaderDetails.get();
 
-        if(readerDetails.getPhoto() == null) {
+        if (readerDetails.getPhoto() == null) {
             throw new NotFoundException("Reader has no photo to delete");
         }
 
@@ -287,18 +287,13 @@ class ReaderController {
     public List<LendingView> getReaderLendings(
             Authentication authentication,
             @PathVariable("year")
-                @Parameter(description = "The year of the Reader to find")
-                final Integer year,
+            @Parameter(description = "The year of the Reader to find") final Integer year,
             @PathVariable("seq")
-                @Parameter(description = "The sequencial of the Reader to find")
-                final Integer seq,
+            @Parameter(description = "The sequencial of the Reader to find") final Integer seq,
             @RequestParam("isbn")
-                @Parameter(description = "The ISBN of the Book to find")
-                final String isbn,
+            @Parameter(description = "The ISBN of the Book to find") final String isbn,
             @RequestParam(value = "returned", required = false)
-                @Parameter(description = "Filter by returned")
-                final Optional<Boolean> returned)
-    {
+            @Parameter(description = "Filter by returned") final Optional<Boolean> returned) {
         String urlReaderNumber = year + "/" + seq;
 
         final var urlReaderDetails = readerService.findByReaderNumber(urlReaderNumber)
@@ -312,13 +307,13 @@ class ReaderController {
                     .orElseThrow(() -> new NotFoundException(ReaderDetails.class, loggedUser.getUsername()));
 
             //if logged Reader matches the one associated with the lendings, skip ahead
-            if(!Objects.equals(loggedReaderDetails.getReaderNumber(), urlReaderDetails.getReaderNumber())){
+            if (!Objects.equals(loggedReaderDetails.getReaderNumber(), urlReaderDetails.getReaderNumber())) {
                 throw new AccessDeniedException("Reader does not have permission to view these lendings");
             }
         }
         final var lendings = lendingService.listByReaderNumberAndIsbn(urlReaderNumber, isbn, returned);
 
-        if(lendings.isEmpty())
+        if (lendings.isEmpty())
             throw new NotFoundException("No lendings found with provided ISBN");
 
         return lendingViewMapper.toLendingView(lendings);
@@ -333,11 +328,10 @@ class ReaderController {
     public ListResponse<ReaderCountView> getTop5ReaderByGenre(
             @RequestParam("genre") String genre,
             @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate)
-    {
-        final var books = readerService.findTopByGenre(genre,startDate,endDate);
+            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+        final var books = readerService.findTopByGenre(genre, startDate, endDate);
 
-        if(books.isEmpty())
+        if (books.isEmpty())
             throw new NotFoundException("No lendings found with provided parameters");
 
         return new ListResponse<>(readerViewMapper.toReaderCountViewList(books));
@@ -348,5 +342,16 @@ class ReaderController {
             @RequestBody final SearchRequest<SearchReadersQuery> request) {
         final var readerList = readerService.searchReaders(request.getPage(), request.getQuery());
         return new ListResponse<>(readerViewMapper.toReaderView(readerList));
+    }
+
+    @GetMapping("/recommendation")
+    public ResponseEntity<List<BookView>> recommendation() {
+        List<Book> recommendedBooks = readerService.recommendation();  // Exemplo: recomendação de 5 livros
+
+        // Converte a lista de Book para BookView usando um mapper
+        List<BookView> recommendedBooksView = bookViewMapper.toBookView(recommendedBooks);
+
+        return ResponseEntity.ok(recommendedBooksView);
+
     }
 }
