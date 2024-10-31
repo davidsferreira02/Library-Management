@@ -70,11 +70,26 @@ public interface SpringDataBookRepository  extends BookRepository, BookRepoCusto
             , nativeQuery = true)
     List<Book> findBooksByAuthorNumber(long authorNumber);
 
+
+    @Override
+    @Query("SELECT new pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO(b, COUNT(l)) " +
+            "FROM Book b JOIN Lending l ON l.book.pk = b.pk " +
+            "WHERE b.genre.genre = :genre " +
+            "GROUP BY b ORDER BY COUNT(l) DESC")
+    List<BookCountDTO> findTopBooksByGenre(@Param("genre") String genre, Pageable pageable);
+
+
 }
+
+
+
+
+
 
 
 interface BookRepoCustom {
     List<Book> searchBooks(pt.psoft.g1.psoftg1.shared.services.Page page, SearchBooksQuery query);
+
 
 }
 
@@ -118,4 +133,6 @@ class BookRepoCustomImpl implements BookRepoCustom {
 
         return q.getResultList();
     }
+
+
 }

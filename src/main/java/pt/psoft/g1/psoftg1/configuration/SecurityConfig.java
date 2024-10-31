@@ -152,6 +152,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/api/readers/{year}/{seq}/lendings").hasRole(Role.READER)
                 .requestMatchers(HttpMethod.DELETE,"/api/readers/photo").hasRole(Role.READER)
                 .requestMatchers(HttpMethod.GET, "/api/readers/{year}/{seq}").hasRole(Role.LIBRARIAN)
+                .requestMatchers(HttpMethod.GET,"/api/readers/recommendation").hasRole(Role.READER)
                 //end readers
                 //genres
                 .requestMatchers(HttpMethod.GET,"/api/genres/top5").hasRole(Role.LIBRARIAN)

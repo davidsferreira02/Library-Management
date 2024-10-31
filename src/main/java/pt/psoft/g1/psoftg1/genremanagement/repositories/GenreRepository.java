@@ -22,4 +22,7 @@ public interface GenreRepository {
     List<GenreLendingsPerMonthDTO> getLendingsAverageDurationPerMonth(LocalDate startDate, LocalDate endDate);
     void delete(Genre genre);
     void deleteAll();
+    List<GenreLendingsDTO> findTopGenresByLendings(Pageable pageable);
+
+
 }

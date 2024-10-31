@@ -5,6 +5,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.RecomendationFactory;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
@@ -20,6 +22,8 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.Pageable;
 
 @Service
@@ -31,6 +35,9 @@ public class ReaderServiceImpl implements ReaderService {
     private final GenreRepository genreRepo;
     private final ForbiddenNameRepository forbiddenNameRepository;
     private final PhotoRepository photoRepository;
+
+
+    private final RecomendationFactory recomendationFactory;
 
 
     @Override
@@ -198,5 +205,12 @@ public class ReaderServiceImpl implements ReaderService {
             throw new NotFoundException("No results match the search query");
 
         return list;
+    }
+
+    @Override
+    public List<Book> recommendation() {
+       return recomendationFactory.generateRecommendation();
+
+
     }
 }
