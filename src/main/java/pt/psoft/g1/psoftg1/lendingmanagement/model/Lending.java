@@ -5,6 +5,7 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.StaleObjectStateException;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
@@ -48,6 +49,12 @@ public class Lending {
      * constructed based on the values of {@code year} and {@code sequencial}.
      */
     private LendingNumber lendingNumber;
+
+
+    @Column(name = "GENERATED_ID", unique = true)
+    @Getter
+    @Setter
+    private String generatedId;
 
     /**
      * {@code Book} associated with this {@code Lending}.

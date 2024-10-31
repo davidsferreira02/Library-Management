@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.services;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -12,6 +13,7 @@ import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.FineRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.shared.model.IDGeneratorFactory;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 
 import java.time.LocalDate;
@@ -33,6 +35,9 @@ public class LendingServiceImpl implements LendingService{
     private int lendingDurationInDays;
     @Value("${fineValuePerDayInCents}")
     private int fineValuePerDayInCents;
+
+    @Autowired
+    private IDGeneratorFactory idGeneratorFactory;
 
     @Override
     public Optional<Lending> findByLendingNumber(String lendingNumber){
@@ -72,13 +77,14 @@ public class LendingServiceImpl implements LendingService{
             }
         }
 
+
         final var b = bookRepository.findByIsbn(resource.getIsbn())
                 .orElseThrow(() -> new NotFoundException("Book not found"));
         final var r = readerRepository.findByReaderNumber(resource.getReaderNumber())
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
         int seq = lendingRepository.getCountFromCurrentYear()+1;
         final Lending l = new Lending(b,r,seq, lendingDurationInDays, fineValuePerDayInCents );
-
+        l.setGeneratedId(idGeneratorFactory.generateId());
         return lendingRepository.save(l);
     }
 
