@@ -18,7 +18,7 @@ public interface LendingRepository {
 
     List<Lending> getOverdue(Page page);
     List<Lending> searchLendings(Page page, String readerNumber, String isbn, Boolean returned, LocalDate startDate, LocalDate endDate);
-
+    String findMostBorrowedGenreByReader(Long readerId);
     Lending save(Lending lending);
 
     void delete(Lending lending);
