@@ -79,7 +79,7 @@ public class BookServiceIntegrationTest {
                 null);
         bookRepository.save(book);
 
-        reader = Reader.newReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
+        reader = Reader.newReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives", 18);
         userRepository.save(reader);
 
         readerDetails = new ReaderDetails(1,

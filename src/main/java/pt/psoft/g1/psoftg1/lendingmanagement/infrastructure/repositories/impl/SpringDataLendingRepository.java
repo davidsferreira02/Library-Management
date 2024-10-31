@@ -74,7 +74,8 @@ public interface SpringDataLendingRepository extends LendingRepository, LendingR
             , nativeQuery = true)
     Double getAvgLendingDurationByIsbn(@Param("isbn") String isbn);
 
-
+    @Query("SELECT l.book.genre FROM Lending l WHERE l.readerDetails.reader.id = :readerId GROUP BY l.book.genre ORDER BY COUNT(l.book.genre) DESC")
+    String findMostBorrowedGenreByReader(Long readerId);
 }
 
 

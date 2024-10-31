@@ -26,7 +26,7 @@ public interface BookRepository {
     List<Book> findBooksByAuthorNumber(Long authorNumber);
 
     List<Book> searchBooks(pt.psoft.g1.psoftg1.shared.services.Page page, SearchBooksQuery query);
-
+    List<Book> findXBooksByGenre(String genre, Pageable pageable);
     Book save(Book book);
     void delete(Book book);
 }

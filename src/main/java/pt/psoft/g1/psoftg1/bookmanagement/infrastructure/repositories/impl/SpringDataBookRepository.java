@@ -70,6 +70,8 @@ public interface SpringDataBookRepository  extends BookRepository, BookRepoCusto
             , nativeQuery = true)
     List<Book> findBooksByAuthorNumber(Long authorNumber);
 
+    @Query("SELECT b FROM Book b WHERE b.genre = :genre")
+    List<Book> findXBooksByGenre(@Param("genre") String genre, Pageable pageable);
 }
 
 
