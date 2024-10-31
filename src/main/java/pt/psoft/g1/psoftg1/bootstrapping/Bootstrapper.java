@@ -48,7 +48,7 @@ public class Bootstrapper implements CommandLineRunner {
 
     private final ForbiddenNameService forbiddenNameService;
 
-private IDGeneratorFactory idGeneratorFactory= new IDGeneratorFactory();
+private final IDGeneratorFactory idGeneratorFactory= new IDGeneratorFactory();
 
 
 
