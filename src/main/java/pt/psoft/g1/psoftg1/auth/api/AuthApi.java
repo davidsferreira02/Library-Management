@@ -41,6 +41,7 @@ import org.springframework.security.oauth2.jwt.JwtEncoderParameters;
 import org.springframework.web.bind.annotation.*;
 
 import pt.psoft.g1.psoftg1.auth.service.GoogleIAMService;
+import pt.psoft.g1.psoftg1.auth.service.IAMService;
 import pt.psoft.g1.psoftg1.usermanagement.api.UserView;
 import pt.psoft.g1.psoftg1.usermanagement.api.UserViewMapper;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
@@ -69,7 +70,7 @@ public class AuthApi {
 
 	private final UserService userService;
 
-	private final GoogleIAMService googleIAMService;
+	private final IAMService iAMService;
 
 	@PostMapping("login")
 	public ResponseEntity<UserView> login(@RequestBody @Valid final AuthRequest request) {
@@ -115,7 +116,7 @@ public class AuthApi {
 	public ResponseEntity<UserView> Token(@RequestParam("code") String code) {
 		try {
 
-			User authenticatedUser = googleIAMService.authenticate(code);
+			User authenticatedUser = iAMService.authenticate(code);
 
 			final Instant now = Instant.now();
 			final long expiry = 3600L;
