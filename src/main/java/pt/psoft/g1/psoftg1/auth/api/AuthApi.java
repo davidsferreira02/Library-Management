@@ -25,6 +25,7 @@ import static java.util.stream.Collectors.joining;
 
 import java.time.Instant;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -110,16 +111,36 @@ public class AuthApi {
 		return userViewMapper.toUserView(user);
 	}
 
-	@GetMapping("/login/oauth2/code/google")
-	public ResponseEntity<String> Token(@RequestParam("code") String code) {
+	@GetMapping("/login/google/code")
+	public ResponseEntity<UserView> Token(@RequestParam("code") String code) {
 		try {
+
 			User authenticatedUser = googleIAMService.authenticate(code);
-			String jwtToken = googleIAMService.generateJwtToken(authenticatedUser);
-			return ResponseEntity.ok().header(HttpHeaders.AUTHORIZATION, "Bearer " + jwtToken).body("Autenticação bem-sucedida!");
+
+			final Instant now = Instant.now();
+			final long expiry = 3600L;
+
+			final String scope = authenticatedUser.getAuthorities().stream()
+					.map(GrantedAuthority::getAuthority)
+					.collect(Collectors.joining(" "));
+
+			final JwtClaimsSet claims = JwtClaimsSet.builder()
+					.issuer("example.io")
+					.issuedAt(now)
+					.expiresAt(now.plusSeconds(expiry))
+					.subject(String.format("%s,%s", authenticatedUser.getId(), authenticatedUser.getUsername()))
+					.claim("roles", scope)
+					.build();
+
+			final String token = this.jwtEncoder.encode(JwtEncoderParameters.from(claims)).getTokenValue();
+			return ResponseEntity.ok()
+					.header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+					.body(userViewMapper.toUserView(authenticatedUser));
 		} catch (Exception e) {
-			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Falha na autenticação com o Google.");
+			return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
 		}
 	}
+
 
 
 
