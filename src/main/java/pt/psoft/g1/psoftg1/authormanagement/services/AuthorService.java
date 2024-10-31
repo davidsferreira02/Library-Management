@@ -11,19 +11,19 @@ public interface AuthorService {
 
     Iterable<Author> findAll();
 
-    Optional<Author> findByAuthorNumber(String authorNumber);
+    Optional<Author> findByAuthorNumber(long authorNumber);
 
     List<Author> findByName(String name);
 
     Author create(CreateAuthorRequest resource);
 
-    Author partialUpdate(String authorNumber, UpdateAuthorRequest resource, long desiredVersion);
+    Author partialUpdate(long authorNumber, UpdateAuthorRequest resource, long desiredVersion);
 
     List<AuthorLendingView> findTopAuthorByLendings();
 
-    List<Book> findBooksByAuthorNumber(String authorNumber);
+    List<Book> findBooksByAuthorNumber(long authorNumber);
 
-    List<Author> findCoAuthorsByAuthorNumber(String authorNumber);
+    List<Author> findCoAuthorsByAuthorNumber(long authorNumber);
 
-    Optional<Author> removeAuthorPhoto(String authorNumber, long desiredVersion);
+    Optional<Author> removeAuthorPhoto(long authorNumber, long desiredVersion);
 }

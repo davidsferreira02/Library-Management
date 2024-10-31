@@ -51,7 +51,7 @@ public class AuthorServiceImplIntegrationTest {
 
     @Test
     public void whenValidId_thenAuthorShouldBeFound() {
-        String id = "1L";
+        long id = 1L;
         Optional<Author> found = authorService.findByAuthorNumber(id);
         found.ifPresent(author -> assertThat(author.getId()).isEqualTo(id));
     }
@@ -65,22 +65,22 @@ public class AuthorServiceImplIntegrationTest {
 
     @Test
     public void createTest() throws IOException {
-        CreateAuthorRequest request1 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", null, null);
+        CreateAuthorRequest request1 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", null, null,null);
         Author createdAuthor1 = authorService.create(request1);
         Assert.assertNull(request1.getPhoto());
         Assert.assertNull(request1.getPhotoURI());
 
-        CreateAuthorRequest request2 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", null, "PHOTO");
+        CreateAuthorRequest request2 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", null, "PHOTO",null);
         Author createdAuthor2 = authorService.create(request2);
         Assert.assertNull(request2.getPhoto());
         Assert.assertNull(request2.getPhotoURI());
 
-        CreateAuthorRequest request3 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", new MockMultipartFile("file", "PHOTO.PNG", "image/png", "some-image-content".getBytes()), null);
+        CreateAuthorRequest request3 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", new MockMultipartFile("file", "PHOTO.PNG", "image/png", "some-image-content".getBytes()), null,null);
         Author createdAuthor3 = authorService.create(request3);
         Assert.assertNull(request3.getPhoto());
         Assert.assertNull(request3.getPhotoURI());
 
-        CreateAuthorRequest request4 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", new MockMultipartFile("file", "PHOTO.PNG", "image/png", "some-image-content".getBytes()), "PHOTO");
+        CreateAuthorRequest request4 = new CreateAuthorRequest("Jo", "O Alex escreveu livros", new MockMultipartFile("file", "PHOTO.PNG", "image/png", "some-image-content".getBytes()), "PHOTO",null);
         Author createdAuthor4 = authorService.create(request4);
         MockMultipartFile expectedPhoto = new MockMultipartFile("file", "PHOTO.PNG", "image/png", "some-image-content".getBytes());
         Assert.assertArrayEquals(expectedPhoto.getBytes(), request4.getPhoto().getBytes());
@@ -92,7 +92,7 @@ public class AuthorServiceImplIntegrationTest {
 
     @Test
     public void findBooksByAuthorNumberTest() {
-        Assert.assertEquals(authorService.findBooksByAuthorNumber("1L"), bookRepository.findBooksByAuthorNumber("1L"));
+        Assert.assertEquals(authorService.findBooksByAuthorNumber(1L), bookRepository.findBooksByAuthorNumber(1L));
     }
 
     @Test

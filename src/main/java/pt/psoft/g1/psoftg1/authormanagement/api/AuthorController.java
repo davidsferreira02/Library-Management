@@ -80,7 +80,7 @@ public class AuthorController {
     @PatchMapping(value = "/{authorNumber}")
     public ResponseEntity<AuthorView> partialUpdate(
             @PathVariable("authorNumber")
-            @Parameter(description = "The number of the Author to find") final String authorNumber,
+            @Parameter(description = "The number of the Author to find") final long authorNumber,
             final WebRequest request,
             @Valid UpdateAuthorRequest resource) {
 
@@ -109,7 +109,7 @@ public class AuthorController {
     @GetMapping(value = "/{authorNumber}")
     public ResponseEntity<AuthorView> findByAuthorNumber(
             @PathVariable("authorNumber")
-            @Parameter(description = "The number of the Author to find") final String authorNumber) {
+            @Parameter(description = "The number of the Author to find") final long authorNumber) {
 
         final var author = authorService.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException(Author.class, authorNumber));
@@ -134,7 +134,7 @@ public class AuthorController {
     public ListResponse<BookView> getBooksByAuthorNumber(
            @PathVariable("authorNumber")
              @Parameter(description = "The number of the Author to find")
-             final String authorNumber) {
+             final long authorNumber) {
 
         //Checking if author exists with this id
         authorService.findByAuthorNumber(authorNumber)
@@ -161,7 +161,7 @@ public class AuthorController {
     @ResponseStatus(HttpStatus.OK)
     public ResponseEntity<byte[]> getSpecificAuthorPhoto(@PathVariable("authorNumber")
                                                              @Parameter(description = "The number of the Author to find")
-                                                             final String authorNumber) {
+                                                             final long authorNumber) {
 
         Author authorDetails = authorService.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException(Author.class, authorNumber));
@@ -187,7 +187,7 @@ public class AuthorController {
     //Co-authors and their respective books
     @Operation(summary = "Get co-authors and their respective books for a specific author")
     @GetMapping("/{authorNumber}/coauthors")
-    public AuthorCoAuthorBooksView getAuthorWithCoAuthors(@PathVariable("authorNumber")String authorNumber) {
+    public AuthorCoAuthorBooksView getAuthorWithCoAuthors(@PathVariable("authorNumber")long authorNumber) {
         var author = authorService.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Author not found"));
         var coAuthors = authorService.findCoAuthorsByAuthorNumber(authorNumber);
@@ -203,7 +203,7 @@ public class AuthorController {
     //Delete a foto
     @Operation(summary = "Deletes a author photo")
     @DeleteMapping("/{authorNumber}/photo")
-    public ResponseEntity<Void> deleteBookPhoto(@PathVariable("authorNumber") final String authorNumber) {
+    public ResponseEntity<Void> deleteBookPhoto(@PathVariable("authorNumber") final long authorNumber) {
 
         Optional<Author> optionalAuthor = authorService.findByAuthorNumber(authorNumber);
         if(optionalAuthor.isEmpty()) {

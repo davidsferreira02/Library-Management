@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.api.AuthorLendingView;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
-import pt.psoft.g1.psoftg1.authormanagement.model.IdGenerator;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
+import pt.psoft.g1.psoftg1.shared.model.IDGeneratorFactory;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
 import java.util.List;
@@ -26,15 +26,17 @@ public class AuthorServiceImpl implements AuthorService {
     private final AuthorMapper mapper;
     private final PhotoRepository photoRepository;
 
+
     @Autowired
-    private IdGenerator idGenerator;
+    private IDGeneratorFactory idGeneratorFactory;
+
     @Override
     public Iterable<Author> findAll() {
         return authorRepository.findAll();
     }
 
     @Override
-    public Optional<Author> findByAuthorNumber(final String authorNumber) {
+    public Optional<Author> findByAuthorNumber(final long authorNumber) {
         return authorRepository.findByAuthorNumber(authorNumber);
     }
 
@@ -64,13 +66,13 @@ public class AuthorServiceImpl implements AuthorService {
             resource.setPhoto(null);
             resource.setPhotoURI(null);
         }
-        resource.setAuthorNumber(idGenerator.generateUniqueHex24(authorRepository));
+        resource.setGeneratedId(idGeneratorFactory.generateId());
         final Author author = mapper.create(resource);
         return authorRepository.save(author);
     }
 
     @Override
-    public Author partialUpdate(final String authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
+    public Author partialUpdate(final long authorNumber, final UpdateAuthorRequest request, final long desiredVersion) {
         // first let's check if the object exists so we don't create a new object with
         // save
         final var author = findByAuthorNumber(authorNumber)
@@ -109,16 +111,16 @@ public class AuthorServiceImpl implements AuthorService {
     }
 
     @Override
-    public List<Book> findBooksByAuthorNumber(String authorNumber){
+    public List<Book> findBooksByAuthorNumber(long authorNumber){
         return bookRepository.findBooksByAuthorNumber(authorNumber);
     }
 
     @Override
-    public List<Author> findCoAuthorsByAuthorNumber(String authorNumber) {
+    public List<Author> findCoAuthorsByAuthorNumber(long authorNumber) {
         return authorRepository.findCoAuthorsByAuthorNumber(authorNumber);
     }
     @Override
-    public Optional<Author> removeAuthorPhoto(String authorNumber, long desiredVersion) {
+    public Optional<Author> removeAuthorPhoto(long authorNumber, long desiredVersion) {
         Author author = authorRepository.findByAuthorNumber(authorNumber)
                 .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 

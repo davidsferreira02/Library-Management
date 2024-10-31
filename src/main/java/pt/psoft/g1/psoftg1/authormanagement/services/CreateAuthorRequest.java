@@ -5,6 +5,7 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.Size;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
+import pt.psoft.g1.psoftg1.shared.model.IDGeneratorFactory;
 
 
 @Data
@@ -15,8 +16,7 @@ public class CreateAuthorRequest {
 
 
 
-   @Size(min = 24, max = 24)
-   private String authorNumber;
+
 
     @Size(min = 1, max = 150)
     private String name;
@@ -33,4 +33,10 @@ public class CreateAuthorRequest {
     @Getter
     @Setter
     private String photoURI;
+
+
+    @Nullable
+    @Getter
+    @Setter
+    private String generatedId;
 }

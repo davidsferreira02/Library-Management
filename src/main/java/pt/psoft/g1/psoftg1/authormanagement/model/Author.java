@@ -1,5 +1,6 @@
 package pt.psoft.g1.psoftg1.authormanagement.model;
 
+
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -12,10 +13,10 @@ import pt.psoft.g1.psoftg1.shared.model.Name;
 @Entity
 public class Author extends EntityWithPhoto {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name = "AUTHOR_NUMBER")
     @Getter
-    @Setter
-    private String authorNumber;
+    private Long authorNumber;
 
     @Version
     private long version;
@@ -38,12 +39,11 @@ public class Author extends EntityWithPhoto {
         return version;
     }
 
-    public String getId() {
+    public Long getId() {
         return authorNumber;
     }
 
-    public Author(String authorNumber,String name, String bio, String photoURI) {
-        this.authorNumber = authorNumber;
+    public Author(String name, String bio, String photoURI) {
         setName(name);
         setBio(bio);
         setPhotoInternal(photoURI);
@@ -52,6 +52,12 @@ public class Author extends EntityWithPhoto {
     protected Author() {
         // got ORM only
     }
+
+
+    @Column(name = "GENERATED_ID", unique = true)
+    @Getter
+    @Setter
+    private String generatedId;
 
 
     public void applyPatch(final long desiredVersion, final UpdateAuthorRequest request) {

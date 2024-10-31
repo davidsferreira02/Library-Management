@@ -37,5 +37,5 @@ public class CreateBookRequest {
     private String photoURI;
 
     @NotNull
-    private List<String> authors;
+    private List<Long> authors;
 }
