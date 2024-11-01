@@ -206,11 +206,6 @@ public class ReaderServiceImpl implements ReaderService {
         return list;
     }
 
-//    @Override
-//    public List<Book> recommendation() {
-//       return recomendationFactory.generateRecommendation();
-//    }
-
     @Override
     public List<Book> recommendation(String username) {
         ReaderDetails readerDetails = readerRepo.findByUsername(username)

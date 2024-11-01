@@ -51,7 +51,7 @@ public class Lending {
     private LendingNumber lendingNumber;
 
 
-    @Column(name = "GENERATED_ID", unique = true)
+    @Column(name = "GENERATED_ID")
     @Getter
     @Setter
     private String generatedId;

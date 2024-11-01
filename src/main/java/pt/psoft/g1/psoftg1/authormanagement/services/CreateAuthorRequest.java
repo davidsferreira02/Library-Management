@@ -34,9 +34,4 @@ public class CreateAuthorRequest {
     @Setter
     private String photoURI;
 
-
-    @Nullable
-    @Getter
-    @Setter
-    private String generatedId;
 }

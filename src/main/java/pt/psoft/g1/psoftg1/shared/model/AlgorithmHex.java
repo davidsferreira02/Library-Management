@@ -11,11 +11,8 @@ import java.util.UUID;
 public class AlgorithmHex implements AlgorithmId {
 
     @Override
-    public String generateId(String algorithmName) {
-
-
+    public String generateId(String businessId) {
         return UUID.randomUUID().toString().replace("-", "").substring(0, 24);
-
     }
 
 }

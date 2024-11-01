@@ -26,7 +26,7 @@ public class IDGeneratorFactory {
             this.algorithmId = applicationContext.getBean(algorithmName, AlgorithmId.class);
     }
 
-    public String generateId() {
-        return algorithmId.generateId(algorithmName);
+    public String generateId(String businessId) {
+        return algorithmId.generateId(businessId);
     }
 }

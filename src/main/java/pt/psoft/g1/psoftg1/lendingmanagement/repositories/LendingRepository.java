@@ -20,7 +20,7 @@ public interface LendingRepository {
     List<Lending> searchLendings(Page page, String readerNumber, String isbn, Boolean returned, LocalDate startDate, LocalDate endDate);
     String findMostBorrowedGenreByReader(Long readerId);
     Lending save(Lending lending);
-
+    Optional<Lending> getLendingByGeneratedId(String generatedId);
     void delete(Lending lending);
 
 }

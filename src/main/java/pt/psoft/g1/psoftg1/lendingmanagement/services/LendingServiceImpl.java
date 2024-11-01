@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
@@ -21,6 +22,7 @@ import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -84,8 +86,16 @@ public class LendingServiceImpl implements LendingService{
                 .orElseThrow(() -> new NotFoundException("Reader not found"));
         int seq = lendingRepository.getCountFromCurrentYear()+1;
         final Lending l = new Lending(b,r,seq, lendingDurationInDays, fineValuePerDayInCents );
-        l.setGeneratedId(idGeneratorFactory.generateId());
-        return lendingRepository.save(l);
+
+        Lending createdLending = lendingRepository.save(l);
+
+        String generatedId;
+        do {
+            generatedId = idGeneratorFactory.generateId(createdLending.getLendingNumber());
+        } while (lendingRepository.getLendingByGeneratedId(generatedId).isPresent());
+        createdLending.setGeneratedId(generatedId);
+
+        return lendingRepository.save(createdLending);
     }
 
     @Override

@@ -32,5 +32,8 @@ public interface SpringDataAuthorRepository extends AuthorRepository, CrudReposi
             "WHERE b IN (SELECT b FROM Book b JOIN b.authors a WHERE a.authorNumber = :authorNumber) " +
             "AND coAuthor.authorNumber <> :authorNumber")
     List<Author> findCoAuthorsByAuthorNumber(Long authorNumber);
+
+    @Query("SELECT a FROM Author a WHERE a.generatedId = :id")
+     Optional<Author> findAuthorByGeneratedId(String id);
 }
 

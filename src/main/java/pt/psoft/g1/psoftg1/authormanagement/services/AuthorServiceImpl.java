@@ -19,6 +19,7 @@ import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -60,17 +61,23 @@ public class AuthorServiceImpl implements AuthorService {
          * - photo = validFile && photoURI = null -> ignored
          * - photo = validFile && photoURI = validString -> photo is set
          * */
-
-
         MultipartFile photo = resource.getPhoto();
         String photoURI = resource.getPhotoURI();
         if(photo == null && photoURI != null || photo != null && photoURI == null) {
             resource.setPhoto(null);
             resource.setPhotoURI(null);
         }
-        resource.setGeneratedId(idGeneratorFactory.generateId());
         final Author author = mapper.create(resource);
-        return authorRepository.save(author);
+
+        Author createdAuthor = authorRepository.save(author);
+
+        String generatedId;
+        do {
+            generatedId = idGeneratorFactory.generateId(UUID.randomUUID().toString());
+        } while (authorRepository.findAuthorByGeneratedId(generatedId).isPresent());
+        createdAuthor.setGeneratedId(generatedId);
+
+        return authorRepository.save(createdAuthor);
     }
 
     @Override

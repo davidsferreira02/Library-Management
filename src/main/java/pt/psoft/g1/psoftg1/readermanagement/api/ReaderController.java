@@ -355,7 +355,7 @@ class ReaderController {
 //
 //    }
 
-    @GetMapping("/recommendation2")
+    @GetMapping("/recommendation")
     public ResponseEntity<List<BookView>> recommendation2(Authentication authentication) {
         List<Book> recommendedBooks = readerService.recommendation(userService.getAuthenticatedUser(authentication).getUsername());
 

@@ -18,5 +18,5 @@ public interface AuthorRepository {
     Page<AuthorLendingView> findTopAuthorByLendings (Pageable pageableRules);
     void delete(Author author);
     List<Author> findCoAuthorsByAuthorNumber(long authorNumber);
-
+    Optional<Author> findAuthorByGeneratedId(String id);
 }
