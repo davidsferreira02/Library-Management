@@ -23,5 +23,5 @@ public interface ReaderService {
     //Optional<Reader> update(UpdateReaderRequest request) throws Exception;
     Optional<ReaderDetails> removeReaderPhoto(String readerNumber, long desiredVersion);
     List<ReaderDetails> searchReaders(Page page, SearchReadersQuery query);
-    List<Book>  recommendation();
+    List<Book> recommendation(String username);
 }

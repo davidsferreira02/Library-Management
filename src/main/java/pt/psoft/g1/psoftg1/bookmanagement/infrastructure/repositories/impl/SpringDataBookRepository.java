@@ -79,7 +79,7 @@ public interface SpringDataBookRepository  extends BookRepository, BookRepoCusto
     List<BookCountDTO> findTopBooksByGenre(@Param("genre") String genre, Pageable pageable);
 
 
-    @Query("SELECT b FROM Book b WHERE b.genre = :genre")
+    @Query("SELECT b FROM Book b WHERE b.genre.genre = :genre")
     List<Book> findXBooksByGenre(@Param("genre") String genre, Pageable pageable);
 }
 

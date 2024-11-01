@@ -22,7 +22,6 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
 
@@ -207,10 +206,16 @@ public class ReaderServiceImpl implements ReaderService {
         return list;
     }
 
+//    @Override
+//    public List<Book> recommendation() {
+//       return recomendationFactory.generateRecommendation();
+//    }
+
     @Override
-    public List<Book> recommendation() {
-       return recomendationFactory.generateRecommendation();
+    public List<Book> recommendation(String username) {
+        ReaderDetails readerDetails = readerRepo.findByUsername(username)
+                .orElseThrow(() -> new NotFoundException("Cannot find reader"));
 
-
+        return recomendationFactory.generateRecommendation(readerDetails);
     }
 }
