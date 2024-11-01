@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Component;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
 import java.util.List;
 
@@ -34,7 +35,7 @@ public class RecomendationFactory {
         this.recomendation = applicationContext.getBean(algorithmName, Recomendation.class);
     }
 
-    public List<Book> generateRecommendation() {
-        return recomendation.recommendBooks(numberOfBooks, genre);
+    public List<Book> generateRecommendation(ReaderDetails readerDetails) {
+        return recomendation.recommendBooks(readerDetails, numberOfBooks, genre);
     }
 }

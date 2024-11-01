@@ -344,9 +344,20 @@ class ReaderController {
         return new ListResponse<>(readerViewMapper.toReaderView(readerList));
     }
 
-    @GetMapping("/recommendation")
-    public ResponseEntity<List<BookView>> recommendation() {
-        List<Book> recommendedBooks = readerService.recommendation();
+//    @GetMapping("/recommendation")
+//    public ResponseEntity<List<BookView>> recommendation() {
+//        List<Book> recommendedBooks = readerService.recommendation();
+//
+//
+//        List<BookView> recommendedBooksView = bookViewMapper.toBookView(recommendedBooks);
+//
+//        return ResponseEntity.ok(recommendedBooksView);
+//
+//    }
+
+    @GetMapping("/recommendation2")
+    public ResponseEntity<List<BookView>> recommendation2(Authentication authentication) {
+        List<Book> recommendedBooks = readerService.recommendation(userService.getAuthenticatedUser(authentication).getUsername());
 
 
         List<BookView> recommendedBooksView = bookViewMapper.toBookView(recommendedBooks);

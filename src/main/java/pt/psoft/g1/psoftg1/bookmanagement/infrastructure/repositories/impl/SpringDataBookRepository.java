@@ -79,17 +79,13 @@ public interface SpringDataBookRepository  extends BookRepository, BookRepoCusto
     List<BookCountDTO> findTopBooksByGenre(@Param("genre") String genre, Pageable pageable);
 
 
+    @Query("SELECT b FROM Book b WHERE b.genre.genre = :genre")
+    List<Book> findXBooksByGenre(@Param("genre") String genre, Pageable pageable);
 }
-
-
-
-
-
 
 
 interface BookRepoCustom {
     List<Book> searchBooks(pt.psoft.g1.psoftg1.shared.services.Page page, SearchBooksQuery query);
-
 
 }
 
@@ -133,6 +129,4 @@ class BookRepoCustomImpl implements BookRepoCustom {
 
         return q.getResultList();
     }
-
-
 }

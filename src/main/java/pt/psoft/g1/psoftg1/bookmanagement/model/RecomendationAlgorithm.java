@@ -8,6 +8,7 @@ import pt.psoft.g1.psoftg1.bookmanagement.services.BookCountDTO;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -23,8 +24,7 @@ public class RecomendationAlgorithm implements Recomendation {
     private BookRepository bookRepository;
 
     @Override
-
-    public List<Book> recommendBooks(int numberOfBooks, int genre) {
+    public List<Book> recommendBooks(ReaderDetails readerDetails, int numberOfBooks, int genre) {
         List<GenreLendingsDTO> topGenres = genreRepository.findTopGenresByLendings(PageRequest.of(0, genre));
         List<Book> recommendedBooks = new ArrayList<>();
 
