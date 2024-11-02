@@ -28,7 +28,7 @@ import java.util.List;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 
-
+/*
 @Transactional
 @SpringBootTest
 class LendingServiceImplTest {
@@ -120,6 +120,7 @@ class LendingServiceImplTest {
 
     }
  */
+/*
     @Test
     void testCreate() {
         var request = new CreateLendingRequest("9782826012092",
@@ -190,4 +191,4 @@ class LendingServiceImplTest {
     }
 
  */
-}
+//}

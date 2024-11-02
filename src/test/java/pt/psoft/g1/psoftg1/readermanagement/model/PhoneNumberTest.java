@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.readermanagement.model;
 
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,4 +34,11 @@ public class PhoneNumberTest {
         PhoneNumber anotherPhoneNumber = new PhoneNumber("212345678");
         assertEquals("212345678", anotherPhoneNumber.toString());
     }
+
+    @Test
+    public void testProtectedConstructor() {
+        PhoneNumber phoneNumber = new PhoneNumber();
+        assertNotNull(phoneNumber);
+    }
+
 }

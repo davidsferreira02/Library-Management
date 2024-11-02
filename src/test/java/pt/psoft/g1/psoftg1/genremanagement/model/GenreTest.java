@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.genremanagement.model;
 
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 
@@ -57,6 +58,12 @@ class GenreTest {
     void getGenre() {
         Genre genre = new Genre("New Genre");
         assertEquals("New Genre", genre.getGenre());
+    }
+
+    @Test
+    public void testProtectedConstructor() {
+        Genre genre = new Genre();
+        assertNotNull(genre);
     }
 
 

@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.readermanagement.model;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.readermanagement.services.UpdateReaderRequest;
@@ -205,6 +206,24 @@ public class ReaderTest {
     public void isThirdPartySharingConsentTest(){
         ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
         assertFalse(readerDetails.isThirdPartySharingConsent());
+    }
+
+    @Test
+    public void testProtectedConstructor() {
+        ReaderDetails readerDetails = new ReaderDetails();
+        assertNotNull(readerDetails);
+    }
+
+    @Test
+    public void getReaderNumber(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
+        assertEquals("2024/123", readerDetails.getReaderNumber());
+    }
+
+    @Test public void getVersion(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
+        ReflectionTestUtils.setField(readerDetails, "version", 1L);
+        assertEquals(1L, readerDetails.getVersion());
     }
 
 

@@ -1,6 +1,8 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -47,6 +49,12 @@ class DescriptionTest {
         final var description = new Description("Some description");
         description.setDescription("Some other description");
         assertEquals("Some other description", description.toString());
+    }
+
+    @Test
+    public void testProtectedConstructor() {
+        Description description = new Description();
+        assertNotNull(description);
     }
     /*
     //caixa Preta unitarios

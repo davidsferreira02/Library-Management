@@ -22,4 +22,10 @@ class PhotoTest {
         Photo photo = new Photo(Paths.get("photoTest.jpg"));
         assertEquals(photo.getPhotoFile(), "photoTest.jpg");
     }
+
+    @Test
+    public void testProtectedConstructor() {
+       Photo photo = new Photo();
+        assertNotNull(photo);
+    }
 }

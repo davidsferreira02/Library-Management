@@ -2,6 +2,7 @@ package pt.psoft.g1.psoftg1.authormanagement.model;
 
 import org.junit.jupiter.api.Test;
 
+import static org.junit.Assert.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -53,6 +54,13 @@ public class BioTest {
         final var bio = new Bio("Some bio");
         bio.setBio("Some other bio");
         assertEquals("Some other bio", bio.toString());
+    }
+
+    @Test
+    public void testProtectedConstructor() {
+
+        Bio bio = new Bio();
+        assertNotNull(bio);
     }
 /*
     @Test

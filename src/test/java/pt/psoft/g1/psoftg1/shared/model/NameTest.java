@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.shared.model;
 
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,4 +42,15 @@ class NameTest {
         name.setName("Some other name");
         assertEquals("Some other name", name.toString());
     }
+    @Test
+    public void testProtectedConstructor() {
+        Name name = new Name();
+        assertNotNull(name);
+    }
+    @Test
+    public void getName(){
+        Name name = new Name("Some name");
+        assertEquals("Some name", name.getName());
+    }
+
 }

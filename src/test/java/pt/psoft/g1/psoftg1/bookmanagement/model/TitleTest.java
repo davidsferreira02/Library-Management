@@ -1,11 +1,11 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
 import java.util.concurrent.ThreadLocalRandom;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 class TitleTest {
 
@@ -75,6 +75,10 @@ class TitleTest {
         Title title = new Title("Initial title");
         assertEquals("Initial title", title.getTitle());
     }
-
+    @Test
+    public void testProtectedConstructor() {
+        Title title = new Title();
+        assertNotNull(title);
+    }
 
 }

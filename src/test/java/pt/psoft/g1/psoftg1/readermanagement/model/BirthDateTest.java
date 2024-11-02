@@ -3,6 +3,7 @@ package pt.psoft.g1.psoftg1.readermanagement.model;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
@@ -52,6 +53,13 @@ public class BirthDateTest {
         BirthDate birthDate = new BirthDate(2000, 1, 1);
         assertEquals(LocalDate.of(2000, 1, 1), birthDate.getBirthDate());
     }
+
+    @Test
+    public void testProtectedConstructor() {
+        BirthDate birthDate = new BirthDate();
+        assertNotNull(birthDate);
+    }
+
 }
 
 

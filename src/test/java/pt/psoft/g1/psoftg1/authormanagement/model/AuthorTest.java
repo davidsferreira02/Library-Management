@@ -5,6 +5,7 @@ import org.hibernate.StaleObjectStateException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -27,23 +28,26 @@ class AuthorTest {
 
     private final UpdateAuthorRequest request = new UpdateAuthorRequest(validName, validBio, null, null);
 
-    private static class EntityWithPhotoImpl extends EntityWithPhoto { }
+    private static class EntityWithPhotoImpl extends EntityWithPhoto {
+    }
+
     @BeforeEach
     void setUp() {
     }
+
     @Test
-    void ensureNameNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author(null,validBio, null));
+    void ensureNameNotNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Author(null, validBio, null));
     }
 
     @Test
-    void ensureBioNotNull(){
-        assertThrows(IllegalArgumentException.class, () -> new Author(validName,null, null));
+    void ensureBioNotNull() {
+        assertThrows(IllegalArgumentException.class, () -> new Author(validName, null, null));
     }
 
-     @Test
-   void whenVersionIsStaleItIsNotPossibleToPatch() {
-        final var subject = new Author(validName,validBio, null);
+    @Test
+    void whenVersionIsStaleItIsNotPossibleToPatch() {
+        final var subject = new Author(validName, validBio, null);
 
         assertThrows(StaleObjectStateException.class, () -> subject.applyPatch(999, request));
     }
@@ -94,11 +98,12 @@ class AuthorTest {
     }
 
     @Test
-    void getTest()  {
+    void getTest() throws NoSuchMethodException {
 
 
         Author author = Mockito.spy(new Author("Initial Name", "Initial Bio", "initialPhoto"));
         UpdateAuthorRequest updateRequest = Mockito.mock(UpdateAuthorRequest.class);
+
 
         Mockito.when(updateRequest.getName()).thenReturn(null);
         Mockito.when(updateRequest.getBio()).thenReturn(null);
@@ -109,31 +114,15 @@ class AuthorTest {
         Mockito.verify(author, Mockito.never()).setBio(null);
 
 
-
         Mockito.when(updateRequest.getName()).thenReturn("New Name");
         Mockito.when(updateRequest.getBio()).thenReturn("New Bio");
+        Mockito.when(updateRequest.getPhotoURI()).thenReturn("Initial Photo");
 
 
         author.applyPatch(author.getVersion(), updateRequest);
 
         Mockito.verify(author, Mockito.times(1)).setName("New Name");
         Mockito.verify(author, Mockito.times(1)).setBio("New Bio");
-
-
-
-/*
-        Assertions.assertEquals("New Name", author.getName());
-        Assertions.assertEquals("New Bio", author.getBio());
-        ReflectionTestUtils.setField(author, "authorNumber", 13929428L);
-        Assertions.assertEquals(13929428L, author.getId());
-        Assertions.assertEquals(13929428L, author.getAuthorNumber());
-        Mockito.when(updateRequest.getName()).thenReturn(null);
-        Mockito.when(updateRequest.getBio()).thenReturn(null);
-        Mockito.when(updateRequest.getPhotoURI()).thenReturn(null);
-        author.applyPatch(author.getVersion(), updateRequest);
-        Assertions.assertNotNull(author.getName());
-        Assertions.assertNotNull(author.getBio());
-        Assertions.assertNotNull(author.getPhoto());*/
 
     }
 
@@ -147,5 +136,41 @@ class AuthorTest {
             author.removePhoto(2L);
         });
     }
+
+    @Test
+    public void testProtectedConstructor() {
+        Author author = new Author();
+        assertNotNull(author);
+    }
+
+    @Test
+    void getAuthorNumber() {
+        Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
+        ReflectionTestUtils.setField(author, "authorNumber", 1L);
+        assertEquals(1L, author.getAuthorNumber());
+    }
+
+    @Test
+    void getId() {
+        Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
+        ReflectionTestUtils.setField(author, "authorNumber", 1L);
+        assertEquals(1L, author.getId());
+    }
+
+
+
+    @Test
+    void getName(){
+        Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
+        assertEquals("Initial Name", author.getName());
+    }
+
+    @Test
+    void getBio(){
+        Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
+        assertEquals("Initial Bio", author.getBio());
+    }
 }
+
+
 

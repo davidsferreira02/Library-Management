@@ -138,4 +138,25 @@ authors.add(validAuthor1);
         });
     }
 
+    @Test
+    public void testProtectedConstructor() {
+        Book book = new Book();
+        assertNotNull(book);
+    }
+
+    @Test
+    public void getIsbn(){
+        authors.add(validAuthor1);
+        Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
+        assertEquals("9782826012092", book.getIsbn());
+    }
+
+    @Test
+    public void getVersion(){
+        authors.add(validAuthor1);
+        Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
+        ReflectionTestUtils.setField(book, "version", 2L);
+        assertEquals(2L, book.getVersion());
+    }
+
 }

@@ -1,6 +1,11 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
+import org.hamcrest.core.Is;
 import org.junit.jupiter.api.Test;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,5 +86,20 @@ class IsbnTest {
 
         assertEquals(isbn1.hashCode(), isbn2.hashCode());
         assertNotEquals(isbn1.hashCode(), isbn3.hashCode());
+    }
+
+    @Test
+    public void testProtectedConstructor() {
+        Isbn isbn = new Isbn();
+        assertNotNull(isbn);
+    }
+
+   @Test
+    void testIsbn10WithX() throws Exception {
+        Isbn isbn = new Isbn();
+        Class<?> clazz = Isbn.class;
+        Method method = clazz.getDeclaredMethod("isValidIsbn10", String.class);
+        method.setAccessible(true);
+        assertFalse((Boolean) method.invoke(isbn, "123456789Y"));
     }
    }

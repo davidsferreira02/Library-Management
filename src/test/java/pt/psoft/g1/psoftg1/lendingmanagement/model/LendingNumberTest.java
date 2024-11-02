@@ -50,5 +50,11 @@ class LendingNumberTest {
     void ensureYearCannotBeInTheFuture() {
         assertThrows(IllegalArgumentException.class, () -> new LendingNumber(LocalDate.now().getYear()+1,1));
     }
+    @Test
+    void testDefaultConstructor() {
 
+        LendingNumber lendingNumber = new LendingNumber();
+        assertNotNull(lendingNumber);
+
+    }
 }

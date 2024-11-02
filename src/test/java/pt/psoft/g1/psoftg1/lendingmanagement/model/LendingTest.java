@@ -1,9 +1,11 @@
 package pt.psoft.g1.psoftg1.lendingmanagement.model;
 
+import org.hibernate.StaleObjectStateException;
 import org.junit.Assert;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
@@ -21,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
 @PropertySource({"classpath:config/library.properties"})
 class LendingTest {
@@ -146,11 +149,93 @@ class LendingTest {
         ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(30));
         assertNotEquals(Optional.empty(),lending.getFineValueInCents());
         }
+    @Test
+    void testDefaultConstructor() {
+
+        Lending lending= new Lending();
+        assertNotNull(lending);
+
+    }
+
+    @Test
+    void newBootStrapping(){
+        // Act
+        int year = 2024;
+        int seq = 1;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate returnedDate = LocalDate.of(2024, 1, 10);
+        int lendingDuration = 14;
+        int fineValuePerDayInCents = 100;
+        Lending lending = Lending.newBootstrappingLending(
+                book, readerDetails, year, seq, startDate, returnedDate, lendingDuration, fineValuePerDayInCents
+        );
+        LendingNumber lendingNumber = Mockito.mock(LendingNumber.class);
+        when(lendingNumber.toString()).thenReturn("2024/1");
+        Assertions.assertNotNull(lending);
+        Assertions.assertEquals(book, lending.getBook());
+        Assertions.assertEquals(readerDetails, lending.getReaderDetails());
+        Assertions.assertEquals(lendingNumber.toString(), lending.getLendingNumber());
+        Assertions.assertEquals(startDate, lending.getStartDate());
+        Assertions.assertEquals(startDate.plusDays(lendingDuration), lending.getLimitDate());
+        Assertions.assertEquals(returnedDate, lending.getReturnedDate());
+        Assertions.assertEquals(fineValuePerDayInCents, lending.getFineValuePerDayInCents());
+    }
+
+    @Test
+    void testSetReturnedThrowsIllegalArgumentExceptionWhenBookAlreadyReturned() {
+        Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending, "returnedDate", LocalDate.now());
+
+        // Act & Assert: Verifica se IllegalArgumentException é lançada
+        assertThrows(IllegalArgumentException.class, () -> {
+            lending.setReturned(1L, "Book already returned.");
+        });
+    }
+
+    @Test
+    void testSetReturnedThrowsStaleObjectStateExceptionWhenVersionMismatch() {
+        Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending, "version", 1L);
+        long desiredVersion = 2L;
 
 
+        assertThrows(StaleObjectStateException.class, () -> {
+            lending.setReturned(desiredVersion, "Version mismatch.");
+        });
+    }
+
+    @Test
+    void testSetReturnedWithoutExceptions() {
+        Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending, "version", 1L);
+        long desiredVersion = 1L;
+        ReflectionTestUtils.setField(lending, "returnedDate", null);
 
 
+        lending.setReturned(desiredVersion, "Returning book.");
+    }
 
+    @Test
+    void getVersion(){
+        Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending, "version", 1L);
+        assertEquals(1L, lending.getVersion());
+    }
+
+    @Test
+    public void testNewBootstrappingLending_NullBook_ThrowsIllegalArgumentException() {
+
+        int year = 2024;
+        int seq = 1;
+        LocalDate startDate = LocalDate.of(2024, 1, 1);
+        LocalDate returnedDate = LocalDate.of(2024, 1, 15);
+        int lendingDuration = 14;
+        int fineValuePerDayInCents = 100;
+
+        assertThrows(IllegalArgumentException.class, () -> {
+            Lending.newBootstrappingLending(null, readerDetails, year, seq, startDate, returnedDate, lendingDuration, fineValuePerDayInCents);
+        });
+    }
     }
 
 
