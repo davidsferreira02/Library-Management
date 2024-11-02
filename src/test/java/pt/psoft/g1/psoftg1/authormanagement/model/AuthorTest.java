@@ -17,6 +17,7 @@ import pt.psoft.g1.psoftg1.shared.model.EntityWithPhoto;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
 
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -105,6 +106,7 @@ class AuthorTest {
         UpdateAuthorRequest updateRequest = Mockito.mock(UpdateAuthorRequest.class);
 
 
+
         Mockito.when(updateRequest.getName()).thenReturn(null);
         Mockito.when(updateRequest.getBio()).thenReturn(null);
         Mockito.when(updateRequest.getPhotoURI()).thenReturn(null);
@@ -124,7 +126,26 @@ class AuthorTest {
         Mockito.verify(author, Mockito.times(1)).setName("New Name");
         Mockito.verify(author, Mockito.times(1)).setBio("New Bio");
 
+
     }
+
+    @Test
+    void applyPatchTest() throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        Author author = new Author();
+        UpdateAuthorRequest updateRequest = Mockito.mock(UpdateAuthorRequest.class);
+        Mockito.when(updateRequest.getPhotoURI()).thenReturn("Initial Photo");
+        Method setPhotoInternal = EntityWithPhoto.class.getDeclaredMethod("setPhotoInternal", String.class);
+        setPhotoInternal.setAccessible(true);
+        setPhotoInternal.invoke(author, "Initial Photo");
+        assertEquals(author.getPhoto().getPhotoFile(), updateRequest.getPhotoURI());
+        Mockito.when(updateRequest.getPhotoURI()).thenReturn(null);
+        setPhotoInternal.invoke(author, "Initial Photo");
+        assertEquals(author.getPhoto().getPhotoFile(), "Initial Photo");
+
+
+
+    }
+
 
     @Test
     void removePhotoTest() {
@@ -169,6 +190,30 @@ class AuthorTest {
     void getBio(){
         Author author = new Author("Initial Name", "Initial Bio", "initialPhoto");
         assertEquals("Initial Bio", author.getBio());
+    }
+
+    @Test
+    public void getVersionTest() {
+        Author author = new Author();
+        ReflectionTestUtils.setField(author, "version", 1L);
+        assertEquals(1L, author.getVersion());
+    }
+
+    @Test
+    public void setPhotoInternalTest() throws Exception {
+        Author author = new Author();
+        Method setPhotoInternal = EntityWithPhoto.class.getDeclaredMethod("setPhotoInternal", String.class);
+        setPhotoInternal.setAccessible(true);
+        setPhotoInternal.invoke(author, "photoPath");
+
+        assertEquals("photoPath", author.getPhoto().getPhotoFile());
+    }
+
+    @Test
+    public void getGeneratedId(){
+        Author author = new Author();
+        author.setGeneratedId("1234");
+        assertEquals("1234", author.getGeneratedId());
     }
 }
 

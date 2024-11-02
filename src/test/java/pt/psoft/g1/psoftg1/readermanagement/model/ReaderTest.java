@@ -161,19 +161,21 @@ public class ReaderTest {
 
         assertThrows(ConflictException.class, () -> readerDetails.applyPatch(1L, Mockito.mock(UpdateReaderRequest.class), null, null));
     }
-     @Test
-    void removePhotoTest()  {
+    @Test
+    void removePhotoTest() {
 
         ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, List.of(Mockito.mock(Genre.class)));
         ReflectionTestUtils.setField(readerDetails, "version", 2L);
+
         assertThrows(ConflictException.class, () -> readerDetails.removePhoto(1L));
+
 
         ReflectionTestUtils.setField(readerDetails, "version", 1L);
         readerDetails.removePhoto(1L);
+
         assertNull(readerDetails.getPhoto());
-
-
     }
+
 
     @Test
     public void getPhoneNumberTest(){
@@ -224,6 +226,25 @@ public class ReaderTest {
         ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
         ReflectionTestUtils.setField(readerDetails, "version", 1L);
         assertEquals(1L, readerDetails.getVersion());
+    }
+
+    @Test
+    public void getGdprConsent(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, false, null, null);
+        assertTrue(readerDetails.isGdprConsent());
+    }
+
+    @Test
+    public void getMarketingConsent(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, true, false, null, null);
+        assertTrue(readerDetails.isMarketingConsent());
+
+    }
+
+    @Test
+    public void getThirdPartySharingConsent(){
+        ReaderDetails readerDetails = new ReaderDetails(123, Mockito.mock(Reader.class), "2010-01-01", "912345678", true, false, true, null, null);
+        assertTrue(readerDetails.isThirdPartySharingConsent());
     }
 
 
