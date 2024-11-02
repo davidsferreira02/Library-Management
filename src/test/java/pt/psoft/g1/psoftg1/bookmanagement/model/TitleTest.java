@@ -1,6 +1,7 @@
 package pt.psoft.g1.psoftg1.bookmanagement.model;
 
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 
 import java.util.concurrent.ThreadLocalRandom;
@@ -80,5 +81,6 @@ class TitleTest {
         Title title = new Title();
         assertNotNull(title);
     }
+
 
 }

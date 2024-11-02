@@ -1,7 +1,7 @@
 package pt.psoft.g1.psoftg1.bookmanagement.service;
 
 
-
+import static org.assertj.core.api.Assertions.assertThat;
 
    import org.junit.Assert;
    import org.junit.jupiter.api.BeforeEach;
@@ -13,14 +13,22 @@ import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
 import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
    import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
    import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
+import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
+import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
+import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
+import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -40,6 +48,13 @@ import static org.junit.jupiter.api.Assertions.*;
         @Autowired
         private GenreRepository genreRepository;
 
+        @Autowired
+        private ReaderRepository readerRepository;
+
+        @Autowired
+        private UserRepository userRepository;
+
+
         @BeforeEach
         public void setUp() {
             // Ensure the genre exists
@@ -55,7 +70,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
         @Test
         public void testCreateBookSuccessfully() {
-            // Preparação dos dados
             String isbn = "9780306406157";
             CreateBookRequest request = new CreateBookRequest();
             request.setTitle("New Book Title");
@@ -76,8 +90,5 @@ import static org.junit.jupiter.api.Assertions.*;
             assertEquals("Fantasy", createdBook.getGenre().toString());
             assertEquals(2, createdBook.getAuthors().size());
         }
-
-
     }
-
 

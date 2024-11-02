@@ -99,7 +99,7 @@ class AuthorTest {
     }
 
     @Test
-    void getTest() throws NoSuchMethodException {
+    void getTest() {
 
 
         Author author = Mockito.spy(new Author("Initial Name", "Initial Bio", "initialPhoto"));
@@ -215,6 +215,8 @@ class AuthorTest {
         author.setGeneratedId("1234");
         assertEquals("1234", author.getGeneratedId());
     }
+
+
 }
 
 

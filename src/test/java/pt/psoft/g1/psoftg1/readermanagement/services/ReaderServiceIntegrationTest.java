@@ -22,6 +22,7 @@ import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
+import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
@@ -70,6 +71,7 @@ public class ReaderServiceIntegrationTest {
                 null,
                 null);
         readerRepository.save(readerDetails);
+
     }
 
     @AfterEach
@@ -78,17 +80,6 @@ public class ReaderServiceIntegrationTest {
         userRepository.delete(reader);
     }
 
-//    @Test
-//    public void testCreateDisabledAndDeleteUser() {
-//        String name = UUID.randomUUID().toString();
-//        User user = userService.create(new CreateUserRequest(name + "@gmail.com", "Manuelino123!", "password"));
-//        assertNotNull(user);
-//        assertEquals(userRepository.findByUsername(user.getUsername()).get().getUsername(), user.getUsername());
-//        userService.delete(user.getId());
-//        assertFalse(user.isEnabled());
-//        userRepository.delete(user);
-//        assertTrue(userRepository.findByUsername(user.getUsername()).isEmpty());
-//    }
 
     @Test
     public void testNotAuthenticated() {
@@ -141,6 +132,4 @@ public class ReaderServiceIntegrationTest {
         assertEquals(1, result.size());
         assertEquals("Manuel Sarapinto das Coives", result.get(0).getReader().getName().toString());
     }
-
-
 }

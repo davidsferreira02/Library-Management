@@ -29,5 +29,12 @@ pipeline {
                 sh 'mvn org.pitest:pitest-maven:mutationCoverage'
             }
         }
+
+        stage('Integration Tests') {
+            steps {
+                sh 'echo "Running Integration Tests..."'
+                sh 'mvn verify'
+            }
+        }
     }
 }

@@ -87,7 +87,6 @@ class BookTest {
         authors.add(validAuthor1);
         Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
         ReflectionTestUtils.setField(book, "version", 1L);
-
         UpdateBookRequest updateRequest = Mockito.mock(UpdateBookRequest.class);
         Mockito.when(updateRequest.getTitle()).thenReturn("New Title");
         Mockito.when(updateRequest.getDescription()).thenReturn("New Description");
@@ -98,6 +97,8 @@ class BookTest {
 
         book.applyPatch(1L, updateRequest);
 
+
+
         assertEquals("New Title", book.getTitle().toString());
 
         assertEquals("New Description", book.getDescription());
@@ -107,6 +108,29 @@ class BookTest {
         assertEquals(List.of(validAuthor2), book.getAuthors());
 
         assertEquals("newPhotoURI", book.getPhoto().getPhotoFile());
+    }
+
+
+    @Test
+    void applyPatchTestWhiteBox() {
+        authors.add(validAuthor1);
+        Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
+        ReflectionTestUtils.setField(book, "version", 1L);
+        UpdateBookRequest updateRequest = Mockito.mock(UpdateBookRequest.class);
+        Mockito.when(updateRequest.getTitle()).thenReturn("New Title");
+        Mockito.when(updateRequest.getDescription()).thenReturn("New Description");
+        Mockito.when(updateRequest.getGenreObj()).thenReturn(validGenre2);
+        Mockito.when(updateRequest.getAuthorObjList()).thenReturn(List.of(validAuthor2));
+        Mockito.when(updateRequest.getPhotoURI()).thenReturn("newPhotoURI");
+
+
+        book.applyPatch(1L, updateRequest);
+        verify(updateRequest, times(1)).getTitle();
+        verify(updateRequest, times(1)).getDescription();
+        verify(updateRequest, times(1)).getGenreObj();
+        verify(updateRequest, times(1)).getAuthorObjList();
+        verify(updateRequest, times(1)).getPhotoURI();
+
     }
 
     @Test

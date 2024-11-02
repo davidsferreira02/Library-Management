@@ -24,6 +24,8 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Locale;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -83,7 +85,7 @@ class LendingServiceImplTest {
                 true,
                 true,
                 true,
-                null,null);
+                null, null);
         readerRepository.save(readerDetails);
 
         // Create and save the lending
@@ -91,8 +93,8 @@ class LendingServiceImplTest {
                 readerDetails,
                 LocalDate.now().getYear(),
                 999,
-                LocalDate.of(LocalDate.now().getYear(), 1,1),
-                LocalDate.of(LocalDate.now().getYear(), 1,11),
+                LocalDate.of(LocalDate.now().getYear(), 1, 1),
+                LocalDate.of(LocalDate.now().getYear(), 1, 11),
                 15,
                 300);
         lendingRepository.save(lending);
@@ -114,12 +116,6 @@ class LendingServiceImplTest {
         assertThat(lendingService.findByLendingNumber(LocalDate.now().getYear() + "/999")).isPresent();
         assertThat(lendingService.findByLendingNumber(LocalDate.now().getYear() + "/1")).isEmpty();
     }
-/*
-    @Test
-    void testListByReaderNumberAndIsbn() {
-
-    }
- */
 
     @Test
     void testCreate() {
@@ -140,7 +136,7 @@ class LendingServiceImplTest {
                 readerDetails,
                 2024,
                 997,
-                LocalDate.of(2024, 3,1),
+                LocalDate.of(2024, 3, 1),
                 null,
                 15,
                 300));
@@ -157,38 +153,44 @@ class LendingServiceImplTest {
                 readerDetails,
                 year,
                 seq,
-                LocalDate.of(2024, 3,1),
+                LocalDate.of(2024, 3, 1),
                 null,
                 15,
                 300));
         var request = new SetLendingReturnedRequest(null);
         assertThrows(StaleObjectStateException.class,
-                () -> lendingService.setReturned(year + "/" + seq, request, (notReturnedLending.getVersion()-1)));
+                () -> lendingService.setReturned(year + "/" + seq, request, (notReturnedLending.getVersion() - 1)));
 
         assertDoesNotThrow(
                 () -> lendingService.setReturned(year + "/" + seq, request, notReturnedLending.getVersion()));
     }
 
     @Test
-    public void testSearchLendings(){
-        Page page = new Page(1,10);
+    public void testSearchLendings() {
+        Page page = new Page(1, 10);
         SearchLendingQuery searchLendingQuery = new SearchLendingQuery(readerDetails.getReaderNumber(),
                 book.getIsbn(),
                 null,
                 "wrong date",
                 "wrong");
 
-        assertThrows(IllegalArgumentException.class, () ->lendingService.searchLendings(page, searchLendingQuery));
-    }
-
-/*
-    @Test
-    void testGetAverageDuration() {
+        assertThrows(IllegalArgumentException.class, () -> lendingService.searchLendings(page, searchLendingQuery));
     }
 
     @Test
-    void testGetOverdue() {
-    }
+    void listByReaderNumberAndIsbn() {
 
- */
+
+        List<Lending> results = lendingService.listByReaderNumberAndIsbn(readerDetails.getReaderNumber(), book.getIsbn(), Optional.empty());
+
+        assertEquals(1, results.size());
+
+        assertEquals(lending.getLendingNumber(), results.get(0).getLendingNumber());
+
+
+    }
 }
+
+
+
+

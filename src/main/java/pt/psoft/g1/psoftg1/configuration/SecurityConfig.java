@@ -169,7 +169,7 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET,"/api/lendings/overdue").hasRole(Role.LIBRARIAN)
                 .requestMatchers(HttpMethod.PATCH,"/api/lendings/{year}/{seq}").hasRole(Role.READER)
                 .requestMatchers(HttpMethod.POST,"/api/lendings/search").hasAnyRole(Role.LIBRARIAN)
-                .requestMatchers(HttpMethod.GET,"/api/readers/recommendation2").permitAll()
+                .requestMatchers(HttpMethod.GET,"/api/readers/recommendation2").hasRole(Role.READER)
                 //end lendings
                 // Admin has access to all endpoints
                 .requestMatchers("/**").hasRole(Role.ADMIN)

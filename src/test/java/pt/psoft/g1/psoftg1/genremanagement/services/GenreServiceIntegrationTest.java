@@ -1,21 +1,31 @@
 package pt.psoft.g1.psoftg1.genremanagement.services;
 
+import org.checkerframework.checker.units.qual.A;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
 import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
+import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
+import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.shared.services.Page;
+import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
+
 
 @SpringBootTest
 public class GenreServiceIntegrationTest {
@@ -25,6 +35,8 @@ public class GenreServiceIntegrationTest {
 
     @Autowired
     private GenreRepository genreRepository;
+    @Autowired
+    private LendingRepository lendingRepository;
 
     private Genre genre;
 
@@ -48,7 +60,7 @@ public class GenreServiceIntegrationTest {
     }
 
     @Test
-    void findAll(){
+    void findAll() {
         assertEquals(genreService.findAll().toString(), genreRepository.findAll().toString());
     }
 
@@ -64,18 +76,17 @@ public class GenreServiceIntegrationTest {
         org.springframework.data.domain.Page<GenreBookCountDTO> repositoryResult = genreRepository.findTop5GenreByBookCount(pageable);
 
 
-
         assertEquals(repositoryResult.getContent(), serviceResult);
     }
 
 
     @Test
-    void getAverageLendings(){
+    void getAverageLendings() {
         GetAverageLendingsQuery query = new GetAverageLendingsQuery();
         query.setYear(2023);
         query.setMonth(5);
         Page page = new Page(1, 10);
-        assertEquals(genreService.getAverageLendings(query, page),genreRepository.getAverageLendingsInMonth(LocalDate.of(query.getYear(), query.getMonth(), 1),page));
+        assertEquals(genreService.getAverageLendings(query, page), genreRepository.getAverageLendingsInMonth(LocalDate.of(query.getYear(), query.getMonth(), 1), page));
     }
 
 
