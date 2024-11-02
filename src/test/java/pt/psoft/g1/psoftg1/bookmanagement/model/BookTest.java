@@ -40,36 +40,37 @@ class BookTest {
 
 
     @BeforeEach
-    void setUp(){
+    void setUp() {
         authors.clear();
     }
 
     @Test
-    void ensureIsbnNotNull(){
+    void ensureIsbnNotNull() {
         authors.add(validAuthor1);
         assertThrows(IllegalArgumentException.class, () -> new Book(null, validTitle, null, validGenre, authors, null));
     }
 
     @Test
-    void ensureTitleNotNull(){
+    void ensureTitleNotNull() {
         authors.add(validAuthor1);
         assertThrows(IllegalArgumentException.class, () -> new Book(validIsbn, null, null, validGenre, authors, null));
     }
 
+
     @Test
-    void ensureGenreNotNull(){
+    void ensureGenreNotNull() {
         authors.add(validAuthor1);
-        assertThrows(IllegalArgumentException.class, () -> new Book(validIsbn, validTitle, null,null, authors, null));
+        assertThrows(IllegalArgumentException.class, () -> new Book(validIsbn, validTitle, null, null, authors, null));
     }
 
     @Test
-    void ensureAuthorsNotNull(){
+    void ensureAuthorsNotNull() {
         authors.add(validAuthor1);
         assertThrows(IllegalArgumentException.class, () -> new Book(validIsbn, validTitle, null, validGenre, null, null));
     }
 
     @Test
-    void ensureAuthorsNotEmpty(){
+    void ensureAuthorsNotEmpty() {
         assertThrows(IllegalArgumentException.class, () -> new Book(validIsbn, validTitle, null, validGenre, authors, null));
     }
 
@@ -81,10 +82,8 @@ class BookTest {
     }
 
 
-
-
     @Test
-    void applyPatchTest()  {
+    void applyPatchTest() {
         authors.add(validAuthor1);
         Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
         ReflectionTestUtils.setField(book, "version", 1L);
@@ -111,8 +110,8 @@ class BookTest {
     }
 
     @Test
-    void removePhotoTest()  {
-authors.add(validAuthor1);
+    void removePhotoTest() {
+        authors.add(validAuthor1);
         Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
         ReflectionTestUtils.setField(book, "version", 2L);
         assertThrows(ConflictException.class, () -> book.removePhoto(1L));
@@ -145,18 +144,19 @@ authors.add(validAuthor1);
     }
 
     @Test
-    public void getIsbn(){
+    public void getIsbn() {
         authors.add(validAuthor1);
         Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
         assertEquals("9782826012092", book.getIsbn());
     }
 
     @Test
-    public void getVersion(){
+    public void getVersion() {
         authors.add(validAuthor1);
         Book book = new Book("9782826012092", "Old Title", "Description", validGenre, authors, "photoURI");
         ReflectionTestUtils.setField(book, "version", 2L);
         assertEquals(2L, book.getVersion());
     }
+
 
 }

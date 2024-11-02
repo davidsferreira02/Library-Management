@@ -78,24 +78,46 @@ class LendingTest {
         Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
         lending.setReturned(0,null);
         assertEquals(LocalDate.now(), lending.getReturnedDate());
+        Lending lending2 = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        lending2.setReturned(0,"commentary");
+        assertEquals(lending2.getCommentary(), "commentary");
     }
 
+
     @Test
-    void testGetDaysDelayed(){
+    void testGetDaysDelayed() {
         Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
         assertEquals(0, lending.getDaysDelayed());
+
+        Lending lending2 = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending2, "limitDate", LocalDate.now().minusDays(10));
+        ReflectionTestUtils.setField(lending2, "returnedDate", LocalDate.now().minusDays(5));
+
+        assertEquals(5, lending2.getDaysDelayed());
     }
 
     @Test
     void testGetDaysUntilReturn(){
         Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
         assertEquals(Optional.of(lendingDurationInDays), lending.getDaysUntilReturn());
+
+        Lending lending2 = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending2, "limitDate", LocalDate.now().minusDays(1));
+        assertEquals(Optional.empty(), lending2.getDaysUntilReturn());
+
+        Lending lending3 = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending2, "limitDate", LocalDate.now().minusDays(lendingDurationInDays));
+        assertEquals(Optional.of(lendingDurationInDays), lending3.getDaysUntilReturn());
     }
 
     @Test
     void testGetDaysOverDue(){
         Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
         assertEquals(Optional.empty(), lending.getDaysOverdue());
+
+        Lending lending2 = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending2, "limitDate", LocalDate.now().minusDays(5));
+        assertEquals(Optional.of(5), lending2.getDaysOverdue());
     }
 
     @Test
@@ -143,12 +165,17 @@ class LendingTest {
     @Test
     public void getFineValueInCents() {
         Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
-       ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(1));
-       ReflectionTestUtils.setField(lending, "returnedDate", LocalDate.now().minusDays(1));
-       assertEquals(Optional.empty(),lending.getFineValueInCents());
+
+        ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(1));
+        ReflectionTestUtils.setField(lending, "returnedDate", LocalDate.now().minusDays(1));
+        assertEquals(Optional.empty(), lending.getFineValueInCents());
+
+
         ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(30));
-        assertNotEquals(Optional.empty(),lending.getFineValueInCents());
-        }
+        ReflectionTestUtils.setField(lending, "returnedDate", LocalDate.now()); // Atraso de 30 dias
+        assertEquals(Optional.of(fineValuePerDayInCents * 30), lending.getFineValueInCents());
+    }
+
     @Test
     void testDefaultConstructor() {
 
@@ -236,6 +263,31 @@ class LendingTest {
             Lending.newBootstrappingLending(null, readerDetails, year, seq, startDate, returnedDate, lendingDuration, fineValuePerDayInCents);
         });
     }
+
+
+    @Test
+    public void getGeneratedId(){
+        Lending lending = new Lending();
+        lending.setGeneratedId("1234");
+        assertEquals("1234", lending.getGeneratedId());
+}
+
+    @Test
+    void testLendingBeforeDueDate() {
+
+        Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        assertTrue(lending.getDaysUntilReturn().isPresent());
+        assertEquals(Optional.empty(), lending.getDaysOverdue());
+    }
+
+    @Test
+    void testLendingAfterDueDate() {
+        Lending lending = new Lending(book, readerDetails, 1, lendingDurationInDays, fineValuePerDayInCents);
+        ReflectionTestUtils.setField(lending, "limitDate", LocalDate.now().minusDays(5));
+        assertEquals(Optional.of(5), lending.getDaysOverdue());
+        assertEquals(Optional.empty(), lending.getDaysUntilReturn());
+    }
+
     }
 
 

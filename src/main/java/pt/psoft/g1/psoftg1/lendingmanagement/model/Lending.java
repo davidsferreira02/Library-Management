@@ -113,6 +113,7 @@ public class Lending {
      * */
     @Size(min = 0, max = 1024)
     @Column(length = 1024)
+    @Getter
     private String commentary = null;
 
     @Transient
