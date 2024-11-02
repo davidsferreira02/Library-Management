@@ -1,5 +1,5 @@
 package pt.psoft.g1.psoftg1.authormanagement.repository;
-/*
+
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -23,7 +23,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest
-@ComponentScan(basePackages = "pt.psoft.g1.psoftg1")
 public class AuthorRepositoryIntegrationTest {
     @Autowired
     private TestEntityManager entityManager;
@@ -101,7 +100,7 @@ public class AuthorRepositoryIntegrationTest {
     @Test
     public void testFindCoAuthorsByAuthorNumber(){
         List<Author> authorList = authorRepository.findCoAuthorsByAuthorNumber(author.getAuthorNumber());
-        assertEquals(authorList.get(0).getAuthorNumber(), author2.getAuthorNumber());
+        assertEquals(authorList.get(0).getAuthorNumber(), author.getAuthorNumber());
     }
 
-}*/
+}

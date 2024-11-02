@@ -23,7 +23,7 @@ import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-/*
+
     @SpringBootTest
     @Transactional
     public class BookServiceIntegrationTest {
@@ -81,4 +81,3 @@ import static org.junit.jupiter.api.Assertions.*;
     }
 
 
- */

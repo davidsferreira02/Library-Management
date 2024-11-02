@@ -1,4 +1,4 @@
-/*package pt.psoft.g1.psoftg1.authormanagement.services;
+package pt.psoft.g1.psoftg1.authormanagement.services;
 
 import org.junit.Assert;
 import org.junit.jupiter.api.BeforeEach;
@@ -118,4 +118,4 @@ public class AuthorServiceImplIntegrationTest {
     }
 
 
-}*/
+}

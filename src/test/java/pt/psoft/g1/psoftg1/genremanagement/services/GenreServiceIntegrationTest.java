@@ -16,7 +16,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-/*
+
 @SpringBootTest
 public class GenreServiceIntegrationTest {
 
@@ -116,6 +116,6 @@ public class GenreServiceIntegrationTest {
         assertEquals("No objects match the provided criteria", thrown.getMessage());
     }
 }
-*/
+
 
 

@@ -35,7 +35,7 @@ import java.util.Optional;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
-/*
+
 @Transactional
 @SpringBootTest
 public class LendingRepositoryIntegrationTest {
@@ -253,4 +253,4 @@ public class LendingRepositoryIntegrationTest {
         assertEquals(lendings.get(0).getLendingNumber(), lending.getLendingNumber(), "Lending number should be same");
     }
 
-}*/
+}

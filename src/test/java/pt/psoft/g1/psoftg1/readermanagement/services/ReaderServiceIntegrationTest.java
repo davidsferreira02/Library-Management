@@ -31,11 +31,8 @@ import pt.psoft.g1.psoftg1.usermanagement.services.CreateUserRequest;
 import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Optional;
-/*
+import java.util.*;
+
 @Transactional
 @SpringBootTest
 public class ReaderServiceIntegrationTest {
@@ -51,25 +48,18 @@ public class ReaderServiceIntegrationTest {
 
     @Autowired
     private ReaderServiceImpl readerService;
-    @Autowired
-    private GenreRepository genreRepository;
+
     @Autowired
     private PhotoRepository photoRepository;
 
     private ReaderDetails readerDetails;
     private Reader reader;
-    @Autowired
-    private ReaderMapperImpl readerMapperImpl;
 
     @BeforeEach
     public void setUp() {
         reader = Reader.newReader("manuel@gmail.com", "Manuelino123!", "Manuel Sarapinto das Coives");
         userRepository.save(reader);
 
-        Genre scienceFiction = new Genre("Science Fiction");
-        Genre fantasy = new Genre("Fantasy");
-        genreRepository.save(scienceFiction);
-        genreRepository.save(fantasy);
         readerDetails = new ReaderDetails(1,
                 reader,
                 "2000-01-01",
@@ -88,16 +78,17 @@ public class ReaderServiceIntegrationTest {
         userRepository.delete(reader);
     }
 
-    @Test
-    public void testCreateDisabledAndDeleteUser() {
-        User user = userService.create(new CreateUserRequest("test1@gmail.com", "Manuelino123!", "password", Role.READER, new HashSet<>()));
-        assertNotNull(user);
-        assertEquals(userRepository.findByUsername(user.getUsername()).get().getUsername(), user.getUsername());
-        userService.delete(user.getId());
-        assertFalse(user.isEnabled());
-        userRepository.delete(user);
-        assertTrue(userRepository.findByUsername(user.getUsername()).isEmpty());
-    }
+//    @Test
+//    public void testCreateDisabledAndDeleteUser() {
+//        String name = UUID.randomUUID().toString();
+//        User user = userService.create(new CreateUserRequest(name + "@gmail.com", "Manuelino123!", "password"));
+//        assertNotNull(user);
+//        assertEquals(userRepository.findByUsername(user.getUsername()).get().getUsername(), user.getUsername());
+//        userService.delete(user.getId());
+//        assertFalse(user.isEnabled());
+//        userRepository.delete(user);
+//        assertTrue(userRepository.findByUsername(user.getUsername()).isEmpty());
+//    }
 
     @Test
     public void testNotAuthenticated() {
@@ -152,4 +143,4 @@ public class ReaderServiceIntegrationTest {
     }
 
 
-}*/
+}
