@@ -21,9 +21,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.web.servlet.MockMvc;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
-import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
-import pt.psoft.g1.psoftg1.bookmanagement.services.GenreBookCountDTO;
+import pt.psoft.g1.psoftg1.bookmanagement.services.*;
 import pt.psoft.g1.psoftg1.genremanagement.api.*;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.services.GenreLendingsDTO;
@@ -35,6 +33,7 @@ import pt.psoft.g1.psoftg1.readermanagement.api.ReaderView;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.api.ListResponse;
+import pt.psoft.g1.psoftg1.shared.model.Photo;
 import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
 import pt.psoft.g1.psoftg1.shared.services.Page;
@@ -106,6 +105,28 @@ public class BookControllerTest {
         assertEquals("Test Book", response.getBody().getTitle());
         assertEquals("9782826012092", response.getBody().getIsbn());
     }
+
+    @Test
+    void testFindByIsbn() {
+        String isbn = "9782826012092";
+        Book book = new Book(isbn, "Test Book", " ", new Genre("Fantasy"), List.of(new Author("Author1", "Bio1", "photoFile1")), null);
+        book.setVersion(1L);
+        BookView bookView = new BookView();
+        bookView.setTitle("Test Book");
+        bookView.setIsbn(isbn);
+
+        when(bookService.findByIsbn(isbn)).thenReturn(book);
+        when(bookViewMapper.toBookView(book)).thenReturn(bookView);
+
+        ResponseEntity<BookView> response = bookController.findByIsbn(isbn);
+
+        assertNotNull(response);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody());
+        assertEquals("Test Book", response.getBody().getTitle());
+        assertEquals(isbn, response.getBody().getIsbn());
+    }
+
 
 
 }

@@ -19,6 +19,7 @@ public class Author extends EntityWithPhoto {
     private Long authorNumber;
 
     @Version
+    @Setter
     private long version;
 
     @Embedded
