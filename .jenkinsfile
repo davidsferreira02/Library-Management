@@ -48,13 +48,14 @@ pipeline {
         stage('Deployment') {
             steps {
                 script {
-                    sh '''
-                    if [ ! "$(docker ps -q -f name=sql)" ]; then
-                        if [ "$(docker ps -aq -f status=exited -f name=sql)" ]; then
-                            docker rm sql
-                        fi
-                        docker run -d --name sql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Passw0rd' -p 1433:1433 mcr.microsoft.com/azure-sql-edge
-                    fi
+                   sh '''
+                   if [ ! "$(docker ps -q -f name=sql --user root)" ]; then
+                       if [ "$(docker ps -aq -f status=exited -f name=sql --user root)" ]; then
+                           docker rm sql --user root
+                       fi
+                       docker run -d --name sql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Passw0rd' -p 1433:1433 --user root mcr.microsoft.com/azure-sql-edge
+                   fi
+                   '''
 
                     echo "Waiting for SQL Server to be ready..."
                     while ! nc -z localhost 1433; do
