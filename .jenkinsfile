@@ -53,21 +53,20 @@ pipeline {
                       if [ "$(sudo docker ps -aq -f status=exited -f name=sql)" ]; then
                           sudo docker rm sql
                       fi
-                      docker run -d --name sql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Passw0rd' -p 1433:1433 mcr.microsoft.com/azure-sql-edge
+                      sudo docker run -d --name sql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Passw0rd' -p 1433:1433 mcr.microsoft.com/azure-sql-edge
                   fi
-                  '''
-                    echo "Waiting for SQL Server to be ready..."
-                    while ! nc -z localhost 1433; do
+
+                  echo "Waiting for SQL Server to be ready..."
+                  while ! nc -z localhost 1433; do
                       sleep 1
                       echo "Waiting for SQL Server..."
-                    done
+                  done
 
-                    echo "SQL Server is ready. Starting Spring Boot application..."
-                    java -jar target/*.jar
-                    '''
+                  echo "SQL Server is ready. Starting Spring Boot application..."
+                  java -jar target/*.jar
+                  '''
                 }
             }
         }
-
     }
 }
