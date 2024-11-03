@@ -22,7 +22,7 @@
 
 		<!-- automatically run annotation processors within the incremental compilation -->
 		<m2e.apt.activation>jdt_apt</m2e.apt.activation>
-		<sonar.host.url>http://localhost:9000</sonar.host.url>
+		<sonar.host.url>http://sonarqube:9000</sonar.host.url>
 		<sonar.projectKey>M1A_1240444_1170605</sonar.projectKey>
 		<sonar.projectName>M1A_1240444_1170605</sonar.projectName>
 		<sonar.token>sqa_4571cc5219d6c94331dd13b6383645f34478e416</sonar.token>
