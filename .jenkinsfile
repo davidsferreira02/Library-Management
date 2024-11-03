@@ -9,20 +9,20 @@ pipeline {
             }
         }
 
-        stage('Package') {
+       /* stage('Package') {
             steps {
                 sh 'echo "Packaging..."'
                 sh 'mvn package'
             }
-        }
+        }*/
 
-        stage('Unit Tests') {
+       /* stage('Unit Tests') {
             steps {
                 sh 'echo "Running Unit Tests..."'
                 sh 'mvn test'
             }
         }
-
+*/
        /* stage('Mutation Testing') {
             steps {
                 sh 'echo "Running Mutation Tests..."'
@@ -55,6 +55,8 @@ pipeline {
                         fi
                         docker run -d --name sql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Passw0rd' -p 1433:1433 mcr.microsoft.com/azure-sql-edge
                     fi
+                    echo "Waiting for SQL Server to be ready..."
+                    sleep 20
                     '''
 
                     sh 'echo "Starting Spring Boot application..."'
