@@ -50,6 +50,8 @@ class LendingServiceImplTest {
     private AuthorRepository authorRepository;
 
     private Lending lending;
+
+    private Lending lending2;
     private ReaderDetails readerDetails;
     private Reader reader;
     private Book book;
@@ -88,22 +90,38 @@ class LendingServiceImplTest {
                 null, null);
         readerRepository.save(readerDetails);
 
-        // Create and save the lending
-        lending = Lending.newBootstrappingLending(book,
+
+        lending = Lending.newBootstrappingLending(
+                book,
                 readerDetails,
                 LocalDate.now().getYear(),
                 999,
                 LocalDate.of(LocalDate.now().getYear(), 1, 1),
-                LocalDate.of(LocalDate.now().getYear(), 1, 11),
+                LocalDate.of(LocalDate.now().getYear(), 1, 11), // Duração de 10 dias
                 15,
-                300);
+                300
+        );
         lendingRepository.save(lending);
+
+
+        lending2 = Lending.newBootstrappingLending(
+                book,
+                readerDetails,
+                LocalDate.now().getYear(),
+                1000,
+                LocalDate.of(LocalDate.now().getYear(), 2, 1),
+                LocalDate.of(LocalDate.now().getYear(), 2, 6), // Duração de 5 dias
+                20,
+                350
+        );
+        lendingRepository.save(lending2);
 
     }
 
     @AfterEach
     void tearDown() {
         lendingRepository.delete(lending);
+        lendingRepository.delete(lending2);
         readerRepository.delete(readerDetails);
         userRepository.delete(reader);
         bookRepository.delete(book);
@@ -183,11 +201,26 @@ class LendingServiceImplTest {
 
         List<Lending> results = lendingService.listByReaderNumberAndIsbn(readerDetails.getReaderNumber(), book.getIsbn(), Optional.empty());
 
-        assertEquals(1, results.size());
+        assertEquals(2, results.size());
 
         assertEquals(lending.getLendingNumber(), results.get(0).getLendingNumber());
 
 
+    }
+
+
+    @Test
+    public void testGetAverageDuration() {
+        Double expectedAverage = 7.5;
+        Double actualAverage = lendingService.getAverageDuration();
+        assertEquals(expectedAverage, actualAverage, 0.1);
+    }
+
+    @Test
+    public void testGetAverageDurationByISBN() {
+        Double expectedAverage = 7.5;
+        Double actualAverage = lendingService.getAvgLendingDurationByIsbn(book.getIsbn());
+        assertEquals(expectedAverage, actualAverage, 0.1);
     }
 }
 
