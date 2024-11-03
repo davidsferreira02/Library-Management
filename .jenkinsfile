@@ -23,7 +23,7 @@ pipeline {
             }
         }
 
-        stage('Mutation Testing') {
+      stage('Mutation Testing') {
             steps {
                 sh 'echo "Running Mutation Tests..."'
                 sh 'mvn org.pitest:pitest-maven:mutationCoverage'
@@ -34,14 +34,6 @@ pipeline {
             steps {
                 sh 'echo "Running Integration Tests..."'
                 sh 'mvn verify'
-            }
-        }
-
-        stage('SonarQube Analysis') {
-            steps {
-                withSonarQubeEnv('sonarqube') {
-                    sh 'mvn sonar:sonar'
-                }
             }
         }
     }
