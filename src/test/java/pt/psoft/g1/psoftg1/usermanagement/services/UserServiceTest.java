@@ -1,19 +1,13 @@
-package pt.psoft.g1.psoftg1.usermanagement.service;
+package pt.psoft.g1.psoftg1.usermanagement.services;
 
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.test.util.ReflectionTestUtils;
 import pt.psoft.g1.psoftg1.shared.model.ForbiddenName;
 import pt.psoft.g1.psoftg1.shared.repositories.ForbiddenNameRepository;
-import pt.psoft.g1.psoftg1.usermanagement.model.Role;
 import pt.psoft.g1.psoftg1.usermanagement.model.User;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
-import pt.psoft.g1.psoftg1.usermanagement.services.CreateUserRequest;
-import pt.psoft.g1.psoftg1.usermanagement.services.EditUserRequest;
-import pt.psoft.g1.psoftg1.usermanagement.services.UserService;
 
 import jakarta.persistence.EntityManager;
 import java.util.Set;

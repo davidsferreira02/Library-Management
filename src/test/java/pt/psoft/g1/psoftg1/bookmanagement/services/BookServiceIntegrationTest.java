@@ -1,4 +1,4 @@
-package pt.psoft.g1.psoftg1.bookmanagement.service;
+package pt.psoft.g1.psoftg1.bookmanagement.services;
 
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -10,25 +10,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
-import pt.psoft.g1.psoftg1.bookmanagement.model.Title;
 import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
-import pt.psoft.g1.psoftg1.bookmanagement.services.BookService;
-import pt.psoft.g1.psoftg1.bookmanagement.services.CreateBookRequest;
-import pt.psoft.g1.psoftg1.bookmanagement.services.SearchBooksQuery;
-import pt.psoft.g1.psoftg1.bookmanagement.services.UpdateBookRequest;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
-import pt.psoft.g1.psoftg1.readermanagement.model.ReaderNumber;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
-import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
 import pt.psoft.g1.psoftg1.shared.services.Page;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
@@ -36,7 +28,6 @@ import pt.psoft.g1.psoftg1.usermanagement.repositories.UserRepository;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 
