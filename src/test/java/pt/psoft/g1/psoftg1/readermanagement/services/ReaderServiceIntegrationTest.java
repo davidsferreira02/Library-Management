@@ -3,6 +3,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.junit.Assert;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -59,6 +60,8 @@ public class ReaderServiceIntegrationTest {
     private ForbiddenNameRepository forbiddenNameRepository;
     @Autowired
     private PhotoRepository photoRepository;
+    @Autowired
+    private GenreRepository genreRepository;
 
     private ReaderDetails readerDetails;
     private Reader reader;
@@ -78,7 +81,10 @@ public class ReaderServiceIntegrationTest {
                 null,
                 null);
         readerRepository.save(readerDetails);
-
+        genreRepository.save(new Genre("Fiction"));
+        genreRepository.save(new Genre("History"));
+        genreRepository.save(new Genre("Science"));
+        genreRepository.save(new Genre("Technology"));
     }
 
     @AfterEach
@@ -185,5 +191,59 @@ public class ReaderServiceIntegrationTest {
 
         assertThrows(IllegalArgumentException.class, () -> readerService.create(createReaderRequest, null));
     }
+    @Test
+    void testCreateReaderWithPhoto() {
+        // Configura o pedido de criação de leitor com foto
+        CreateReaderRequest createReaderRequest = new CreateReaderRequest();
+        createReaderRequest.setUsername("new_user_with_photo@example.com");
+        createReaderRequest.setPassword("Password123");
+        createReaderRequest.setFullName("Jane Doe");
+        createReaderRequest.setBirthDate("1990-01-01");
+        createReaderRequest.setPhoneNumber("923456789");
+        createReaderRequest.setInterestList(List.of("Fiction", "History"));
+        createReaderRequest.setGdpr(true);
+
+        // Define a foto
+        MockMultipartFile photo = new MockMultipartFile("photo", "photo.jpg", "image/jpeg", "photo data".getBytes());
+        createReaderRequest.setPhoto(photo);
+
+        // Executa o método de criação
+        ReaderDetails createdReader = readerService.create(createReaderRequest, "photo.jpg");
+
+        // Verifica se o leitor foi criado corretamente com a foto
+        assertNotNull(createdReader);
+        assertEquals("new_user_with_photo@example.com", createdReader.getReader().getUsername());
+        assertEquals("Jane Doe", createdReader.getReader().getName().toString());
+        assertNotNull(createdReader.getPhoto(), "Photo should be set in ReaderDetails");
+        assertEquals("photo.jpg", createdReader.getPhoto().getPhotoFile(), "Photo URI should match");
+    }
+
+    @Test
+    void testCreateReaderWithNullPhotoAndPhotoURI() {
+        // Configura o pedido de criação de leitor com photo e photoURI como null
+        CreateReaderRequest createReaderRequest = new CreateReaderRequest();
+        createReaderRequest.setUsername("new_user_no_photo@example.com");
+        createReaderRequest.setPassword("Password123");
+        createReaderRequest.setFullName("Jane Smith");
+        createReaderRequest.setBirthDate("1990-01-01");
+        createReaderRequest.setPhoneNumber("923456789");
+        createReaderRequest.setInterestList(List.of("Science", "Technology"));
+        createReaderRequest.setGdpr(true);
+
+
+        createReaderRequest.setPhoto(null);
+
+        // Executa o método de criação com photoURI como null
+        ReaderDetails createdReader = readerService.create(createReaderRequest, null);
+
+
+        assertNotNull(createdReader);
+        assertEquals("new_user_no_photo@example.com", createdReader.getReader().getUsername());
+        assertEquals("Jane Smith", createdReader.getReader().getName().toString());
+        assertNull(createdReader.getPhoto());
+    }
+
+
+
 
 }
