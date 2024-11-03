@@ -56,38 +56,4 @@ class DescriptionTest {
         Description description = new Description();
         assertNotNull(description);
     }
-    /*
-    //caixa Preta unitarios
-    @Test
-    void ensureDescriptionCanBeBlankOrWhitespace() {
-        Description description = new Description("");
-        assertNull(description.toString());
-
-        description = new Description("     ");
-        assertNull(description.toString());
-    }
-
-    @Test
-    void ensureDescriptionAcceptsMaxLength() {
-        StringBuilder longDescription = new StringBuilder();
-        for (int i = 0; i < 4096; i++) {
-            longDescription.append("a");
-        }
-        Description description = new Description(longDescription.toString());
-        assertEquals(longDescription.toString(), description.toString());
-    }
-//caixa branca
-
-    @Test
-    void ensureDescriptionThrowsExceptionWhenTooLong() {
-        StringBuilder longDescription = new StringBuilder();
-        for (int i = 0; i < 4097; i++) {
-            longDescription.append("a");
-        }
-        assertThrows(IllegalArgumentException.class, () -> new Description(longDescription.toString()));
-    }
-*/
-
-
-
-}
+   }

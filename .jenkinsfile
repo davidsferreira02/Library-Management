@@ -9,26 +9,26 @@ pipeline {
             }
         }
 
-       /* stage('Package') {
+        stage('Package') {
             steps {
                 sh 'echo "Packaging..."'
                 sh 'mvn package'
             }
-        }*/
+        }
 
-       /* stage('Unit Tests') {
+        stage('Unit Tests') {
             steps {
                 sh 'echo "Running Unit Tests..."'
                 sh 'mvn test'
             }
         }
-*/
-       /* stage('Mutation Testing') {
+
+        stage('Mutation Testing') {
             steps {
                 sh 'echo "Running Mutation Tests..."'
                 sh 'mvn org.pitest:pitest-maven:mutationCoverage'
             }
-        }*/
+        }
 
         stage('Integration Tests') {
             steps {
@@ -37,34 +37,10 @@ pipeline {
             }
         }
 
-        /*stage('SonarQube Analysis') {
+        stage('SonarQube Analysis') {
             steps {
                 withSonarQubeEnv('sonarqube') {
                     sh 'mvn sonar:sonar'
-                }
-            }
-        }*/
-
-        stage('Deployment') {
-            steps {
-                script {
-                  sh '''
-                  if [ ! "$(sudo docker ps -q -f name=sql)" ]; then
-                      if [ "$(sudo docker ps -aq -f status=exited -f name=sql)" ]; then
-                          sudo docker rm sql
-                      fi
-                      sudo docker run -d --name sql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Passw0rd' -p 1433:1433 mcr.microsoft.com/azure-sql-edge
-                  fi
-
-                  echo "Waiting for SQL Server to be ready..."
-                  while ! nc -z localhost 1433; do
-                      sleep 1
-                      echo "Waiting for SQL Server..."
-                  done
-
-                  echo "SQL Server is ready. Starting Spring Boot application..."
-                  java -jar target/*.jar
-                  '''
                 }
             }
         }

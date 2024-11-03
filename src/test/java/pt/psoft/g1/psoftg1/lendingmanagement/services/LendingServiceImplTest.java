@@ -248,14 +248,14 @@ public void createLending_ShouldPersistLendingAndReturnLendingView() {
 
 
 
-        // Retrieve the saved lending
+
         Lending savedLending = lendingRepository.findByLendingNumber(lending.getLendingNumber())
                 .orElseThrow(() -> new AssertionError("Lending não foi persistido no repositório"));
 
-        // Map to LendingView
+
         LendingView lendingView = lendingViewMapper.toLendingView(savedLending);
 
-        // Validations
+
         assertEquals(createLendingRequest.getReaderNumber(), lending.getReaderDetails().getReaderNumber());
         assertNotNull(lendingView.getLendingNumber());
         assertNotNull(lending.getVersion());

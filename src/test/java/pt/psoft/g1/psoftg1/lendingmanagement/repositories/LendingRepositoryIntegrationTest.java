@@ -249,8 +249,8 @@ public class LendingRepositoryIntegrationTest {
         List<Lending> lendings = lendingRepository.searchLendings(page, readerDetails.getReaderNumber(), book.getIsbn(), null, null, null);
 
         assertNotNull(lendings);
-        assertEquals(lendings.get(0).getLendingNumber(), lending.getLendingNumber(), "Lending number should be same");
-        assertEquals(lendings.get(0).getLendingNumber(), lending.getLendingNumber(), "Lending number should be same");
+        assertEquals(lendings.get(0).getLendingNumber(), lending.getLendingNumber());
+
     }
 
 }

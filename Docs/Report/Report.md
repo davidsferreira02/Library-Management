@@ -114,8 +114,8 @@ This project uses a monolithic architecture, a software development paradigm in 
 <br>
 
 
+![imagem](https://hackmd.io/_uploads/H1puOtB-yx.png)
 
-![imagem](https://hackmd.io/_uploads/ryMFhoMbkl.png)
 
 <center>Figure 3:Physical View Level 1 System-as-is</center>
 
@@ -207,7 +207,9 @@ This project uses a monolithic architecture, a software development paradigm in 
 ### CI/CD
 
 
-![imagem](https://hackmd.io/_uploads/ry272oGW1l.png)
+![imagem](https://hackmd.io/_uploads/B1xrdtrZkg.png)
+
+
 
 
 <center>Figure 13 : Physical View Level 1 system-to-be</center>
@@ -247,11 +249,11 @@ This project uses a monolithic architecture, a software development paradigm in 
 ### The requirements developed in this iteration were:
 
 * Persisting data in different data models (e.g. relational, document) and SGBD:
-    * Relacional data model:SQL Server
-    * Document data model (NoSQL): e.g. MongoDB,
+  * Relacional data model:SQL Server
+  * Document data model (NoSQL): e.g. MongoDB,
 * Adopting different IAM (Identity and Access Management) providers:
-    * Google
-    * Facebook
+  * Google
+  * Facebook
 
 
 ### Requirement 1
@@ -365,23 +367,23 @@ This project uses a monolithic architecture, a software development paradigm in 
 
 
 * **Delayed Binding**
-    * **Delayed binding** allows the decision about which implementation to use to be made only at runtime, rather than being determined at the time of compilation or initial configuration. This is made possible by using profiles or environment variables to dynamically select the appropriate dependency according to the active configurations. This approach increases the flexibility of the system, as it allows implementations to be replaced or updated without the need to modify the core code, just by adjusting the configuration. Deferred binding is particularly useful in systems that need to adapt to different execution contexts or environments, such as different types of database or authentication providers.
+  * **Delayed binding** allows the decision about which implementation to use to be made only at runtime, rather than being determined at the time of compilation or initial configuration. This is made possible by using profiles or environment variables to dynamically select the appropriate dependency according to the active configurations. This approach increases the flexibility of the system, as it allows implementations to be replaced or updated without the need to modify the core code, just by adjusting the configuration. Deferred binding is particularly useful in systems that need to adapt to different execution contexts or environments, such as different types of database or authentication providers.
 
 * **Tactical Coupling**
-    * **Tactical coupling** is a strategy that allows a main class, such as a core service, to rely only on abstractions, such as interfaces, to interact with specific implementations, without knowing their internal details. This tactic maintains a minimum and controlled level of coupling, ensuring that new implementations can be integrated without impacting existing code. Tactical coupling promotes modularity and ease of maintenance, while allowing dependencies to be replaced transparently, without restructuring the core logic. This is essential in systems seeking flexibility and scalability, as it allows components to be exchanged without affecting overall behaviour.
+  * **Tactical coupling** is a strategy that allows a main class, such as a core service, to rely only on abstractions, such as interfaces, to interact with specific implementations, without knowing their internal details. This tactic maintains a minimum and controlled level of coupling, ensuring that new implementations can be integrated without impacting existing code. Tactical coupling promotes modularity and ease of maintenance, while allowing dependencies to be replaced transparently, without restructuring the core logic. This is essential in systems seeking flexibility and scalability, as it allows components to be exchanged without affecting overall behaviour.
 
 * **Use of Abstract Services**
-    * **The use of abstract services** is a tactic that defines contracts for specific functionalities, such as data persistence or authentication, that all concrete implementations must follow. This means that any new service that implements the abstract interface can be integrated into the system without modifying the core logic, fulfilling the Open/Closed principle. By separating the definition of the service from its implementation, this approach allows for the replacement and expansion of functionalities, keeping the system modular and prepared for changes. The use of abstract services is fundamental for systems that require interoperability and extensibility, allowing for a flexible structure that is independent of the specific technologies used in each context.
+  * **The use of abstract services** is a tactic that defines contracts for specific functionalities, such as data persistence or authentication, that all concrete implementations must follow. This means that any new service that implements the abstract interface can be integrated into the system without modifying the core logic, fulfilling the Open/Closed principle. By separating the definition of the service from its implementation, this approach allows for the replacement and expansion of functionalities, keeping the system modular and prepared for changes. The use of abstract services is fundamental for systems that require interoperability and extensibility, allowing for a flexible structure that is independent of the specific technologies used in each context.
 
 
 ### Patterns
 
 
 * **Dependency Injection**
-    * **Dependency Injection** is a pattern that aims to increase the modularity and testability of code by allowing the dependencies of a class to be injected instead of being created or defined directly. This pattern promotes decoupling, as the class depends on interfaces or abstractions rather than concrete implementations, making it easier to replace dependencies with other implementations at runtime or testing. In addition, Dependency Injection helps to keep control of dependencies centralised, allowing the system to automatically choose the correct implementations according to configurations.
+  * **Dependency Injection** is a pattern that aims to increase the modularity and testability of code by allowing the dependencies of a class to be injected instead of being created or defined directly. This pattern promotes decoupling, as the class depends on interfaces or abstractions rather than concrete implementations, making it easier to replace dependencies with other implementations at runtime or testing. In addition, Dependency Injection helps to keep control of dependencies centralised, allowing the system to automatically choose the correct implementations according to configurations.
 
 * **Strategy Pattern**
-    * **The Strategy Pattern** makes it possible to define a family of algorithms or behaviours and make them interchangeable depending on the execution context, without the client knowing which specific strategy is being used. It promotes flexibility by encapsulating different execution methods under a common interface, allowing the system to select the correct implementation at runtime. In this way, the Strategy Pattern simplifies the code by moving the decision logic away from the client, which makes it easier to extend the system to new behaviours without changing the existing code.
+  * **The Strategy Pattern** makes it possible to define a family of algorithms or behaviours and make them interchangeable depending on the execution context, without the client knowing which specific strategy is being used. It promotes flexibility by encapsulating different execution methods under a common interface, allowing the system to select the correct implementation at runtime. In this way, the Strategy Pattern simplifies the code by moving the decision logic away from the client, which makes it easier to extend the system to new behaviours without changing the existing code.
 
 
 
@@ -446,14 +448,14 @@ This project uses a monolithic architecture, a software development paradigm in 
 
 * 3.Generating Lending and Authors ID in different formats according to the following specifications:
 
-    * 24 hexadecimal characters
-    * 20 carateres alfanuméricos como hash de id de negócio da entidade de negócio
+  * 24 hexadecimal characters
+  * 20 carateres alfanuméricos como hash de id de negócio da entidade de negócio
 
 
 * 4. Recommending Lendings according to following specifications:
 
-    * X books most lent from the Y most lent genre (student 1)
-    * Based on the age of the reader: (student 2)
+  * X books most lent from the Y most lent genre (student 1)
+  * Based on the age of the reader: (student 2)
 
 
 

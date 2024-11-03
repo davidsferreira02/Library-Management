@@ -78,7 +78,7 @@ public class AuthorControllerTest {
     @Test
     void testCreate() {
         CreateAuthorRequest request = new CreateAuthorRequest();
-        request.setPhoto(null); // Assuming the photo is null for simplicity
+        request.setPhoto(null);
 
         Author author = new Author("Author1", "Bio24", null);
         author.setVersion(1L);
