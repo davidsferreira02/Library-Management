@@ -233,7 +233,7 @@ public class ReaderServiceIntegrationTest {
 
         createReaderRequest.setPhoto(null);
 
-        // Executa o método de criação com photoURI como null
+
         ReaderDetails createdReader = readerService.create(createReaderRequest, null);
 
 
