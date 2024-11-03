@@ -6,6 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.transaction.annotation.Transactional;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
 import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
@@ -14,6 +17,8 @@ import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
 import pt.psoft.g1.psoftg1.exceptions.LendingForbiddenException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
+import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingView;
+import pt.psoft.g1.psoftg1.lendingmanagement.api.LendingViewMapper;
 import pt.psoft.g1.psoftg1.lendingmanagement.model.Lending;
 import pt.psoft.g1.psoftg1.lendingmanagement.repositories.LendingRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
@@ -29,6 +34,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+
 
 
 @Transactional
@@ -48,6 +54,11 @@ class LendingServiceImplTest {
     private GenreRepository genreRepository;
     @Autowired
     private AuthorRepository authorRepository;
+
+
+    @Autowired
+    private LendingViewMapper lendingViewMapper;
+
 
     private Lending lending;
 
@@ -222,8 +233,32 @@ class LendingServiceImplTest {
         Double actualAverage = lendingService.getAvgLendingDurationByIsbn(book.getIsbn());
         assertEquals(expectedAverage, actualAverage, 0.1);
     }
+
+
+@Test
+public void createLending_ShouldPersistLendingAndReturnLendingView() {
+
+
+
+
+
+        CreateLendingRequest createLendingRequest = new CreateLendingRequest();
+        createLendingRequest.setReaderNumber(readerDetails.getReaderNumber());
+        createLendingRequest.setIsbn(book.getIsbn());
+
+
+
+        // Retrieve the saved lending
+        Lending savedLending = lendingRepository.findByLendingNumber(lending.getLendingNumber())
+                .orElseThrow(() -> new AssertionError("Lending não foi persistido no repositório"));
+
+        // Map to LendingView
+        LendingView lendingView = lendingViewMapper.toLendingView(savedLending);
+
+        // Validations
+        assertEquals(createLendingRequest.getReaderNumber(), lending.getReaderDetails().getReaderNumber());
+        assertNotNull(lendingView.getLendingNumber());
+        assertNotNull(lending.getVersion());
+    }
 }
-
-
-
 

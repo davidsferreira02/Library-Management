@@ -132,14 +132,13 @@ public class ReaderServiceIntegrationTest {
 
     @Test
     void testSearchReaders() {
-        // Setup
+
         pt.psoft.g1.psoftg1.shared.services.Page page = new pt.psoft.g1.psoftg1.shared.services.Page(1, 10);
         SearchReadersQuery query = new SearchReadersQuery("Manuel", "", "");
 
-        // Execute
+
         List<ReaderDetails> result = readerService.searchReaders(page, query);
 
-        // Verify
         assertNotNull(result);
         assertFalse(result.isEmpty());
         assertEquals(1, result.size());
@@ -193,7 +192,7 @@ public class ReaderServiceIntegrationTest {
     }
     @Test
     void testCreateReaderWithPhoto() {
-        // Configura o pedido de criação de leitor com foto
+
         CreateReaderRequest createReaderRequest = new CreateReaderRequest();
         createReaderRequest.setUsername("new_user_with_photo@example.com");
         createReaderRequest.setPassword("Password123");
@@ -203,14 +202,14 @@ public class ReaderServiceIntegrationTest {
         createReaderRequest.setInterestList(List.of("Fiction", "History"));
         createReaderRequest.setGdpr(true);
 
-        // Define a foto
+
         MockMultipartFile photo = new MockMultipartFile("photo", "photo.jpg", "image/jpeg", "photo data".getBytes());
         createReaderRequest.setPhoto(photo);
 
-        // Executa o método de criação
+
         ReaderDetails createdReader = readerService.create(createReaderRequest, "photo.jpg");
 
-        // Verifica se o leitor foi criado corretamente com a foto
+
         assertNotNull(createdReader);
         assertEquals("new_user_with_photo@example.com", createdReader.getReader().getUsername());
         assertEquals("Jane Doe", createdReader.getReader().getName().toString());
@@ -220,7 +219,7 @@ public class ReaderServiceIntegrationTest {
 
     @Test
     void testCreateReaderWithNullPhotoAndPhotoURI() {
-        // Configura o pedido de criação de leitor com photo e photoURI como null
+
         CreateReaderRequest createReaderRequest = new CreateReaderRequest();
         createReaderRequest.setUsername("new_user_no_photo@example.com");
         createReaderRequest.setPassword("Password123");

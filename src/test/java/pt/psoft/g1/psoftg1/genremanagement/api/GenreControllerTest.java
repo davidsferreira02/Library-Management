@@ -33,6 +33,7 @@ public class GenreControllerTest {
     @Autowired
     private GenreController genreController;
 
+
     @Test
     public void testGetTopWithGenres() {
 
@@ -68,10 +69,9 @@ public class GenreControllerTest {
         when(genreService.getLendingsPerMonthLastYearByGenre()).thenReturn(mockList);
         when(genreViewMapper.toGenreLendingsCountPerMonthView(mockList)).thenReturn(mockViewList);
 
-        // Chama o método diretamente no controlador
+
         ListResponse<GenreLendingsCountPerMonthView> response = genreController.getLendingsPerMonthLastYearByGenre();
 
-        // Verifica se a resposta contém dados
         assertNotNull(response);
         assertNotNull(response.getItems());
         assertEquals(1, response.getItems().size());

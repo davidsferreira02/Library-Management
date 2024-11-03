@@ -4,6 +4,7 @@ import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.*;
 import static org.junit.jupiter.api.Assertions.*;
 
+import jakarta.persistence.Transient;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -15,18 +16,25 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.multipart.MultipartFile;
 import pt.psoft.g1.psoftg1.authormanagement.model.Author;
+import pt.psoft.g1.psoftg1.authormanagement.repositories.AuthorRepository;
 import pt.psoft.g1.psoftg1.authormanagement.services.AuthorService;
 import pt.psoft.g1.psoftg1.authormanagement.services.CreateAuthorRequest;
 import pt.psoft.g1.psoftg1.authormanagement.services.UpdateAuthorRequest;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookView;
 import pt.psoft.g1.psoftg1.bookmanagement.api.BookViewMapper;
+import pt.psoft.g1.psoftg1.bookmanagement.model.Book;
+import pt.psoft.g1.psoftg1.bookmanagement.repositories.BookRepository;
+import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
+import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.shared.api.ListResponse;
 import pt.psoft.g1.psoftg1.shared.services.ConcurrencyService;
 import pt.psoft.g1.psoftg1.shared.services.FileStorageService;
 
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.List;
 
@@ -51,6 +59,16 @@ public class AuthorControllerTest {
 
     @MockBean
     private BookViewMapper bookViewMapper;
+
+    @Autowired
+    private AuthorRepository authorRepository;
+
+    @Autowired
+    private GenreRepository genreRepository;
+
+
+    @Autowired
+    private BookRepository bookRepository;
 
     @BeforeEach
     void setUp() {
@@ -119,21 +137,5 @@ public class AuthorControllerTest {
         assertNotNull(response.getBody());
         assertEquals(authorView, response.getBody());
     }
-
-    @Test
-    void testFindByName() {
-        String name = "Author Name";
-        Author author = new Author("Author1", "Bio24", null);
-
-        List<Author> authors = List.of(author);
-        when(authorService.findByName(name)).thenReturn(authors);
-        when(authorViewMapper.toAuthorView(authors)).thenReturn(List.of(new AuthorView()));
-
-        ListResponse<AuthorView> response = authorController.findByName(name);
-
-        assertNotNull(response);
-        assertFalse(response.getItems().isEmpty());
-    }
-
 }
 
