@@ -11,18 +11,22 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.boot.test.context.SpringBootTest;
 
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.security.access.AccessDeniedException;
 
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+import pt.psoft.g1.psoftg1.exceptions.ConflictException;
 import pt.psoft.g1.psoftg1.exceptions.NotFoundException;
 import pt.psoft.g1.psoftg1.genremanagement.model.Genre;
 import pt.psoft.g1.psoftg1.genremanagement.repositories.GenreRepository;
 import pt.psoft.g1.psoftg1.readermanagement.model.ReaderDetails;
 import pt.psoft.g1.psoftg1.readermanagement.repositories.ReaderRepository;
 import pt.psoft.g1.psoftg1.readermanagement.services.ReaderService;
+import pt.psoft.g1.psoftg1.shared.model.ForbiddenName;
 import pt.psoft.g1.psoftg1.shared.model.Photo;
+import pt.psoft.g1.psoftg1.shared.repositories.ForbiddenNameRepository;
 import pt.psoft.g1.psoftg1.shared.repositories.PhotoRepository;
 import pt.psoft.g1.psoftg1.usermanagement.model.Reader;
 import pt.psoft.g1.psoftg1.usermanagement.model.Role;
@@ -50,6 +54,9 @@ public class ReaderServiceIntegrationTest {
     @Autowired
     private ReaderServiceImpl readerService;
 
+
+    @Autowired
+    private ForbiddenNameRepository forbiddenNameRepository;
     @Autowired
     private PhotoRepository photoRepository;
 
@@ -103,7 +110,7 @@ public class ReaderServiceIntegrationTest {
 
     @Test
     void shouldIgnorePhotoUpdateIfNewPhotoProvidedButNoURI() {
-        Long readerId = readerDetails.getReader().getId(); // Use the ID of the saved reader
+        Long readerId = readerDetails.getReader().getId();
         long desiredVersion = readerDetails.getVersion();
 
         MultipartFile newPhoto = new MockMultipartFile("newPhoto", "new-photo.jpg", "image/jpeg", "image data".getBytes());
@@ -132,4 +139,51 @@ public class ReaderServiceIntegrationTest {
         assertEquals(1, result.size());
         assertEquals("Manuel Sarapinto das Coives", result.get(0).getReader().getName().toString());
     }
+
+
+
+    @Test
+    void testFindByReaderNumber_ExistingReader() {
+        Optional<ReaderDetails> foundReader = readerService.findByReaderNumber(readerDetails.getReaderNumber());
+        assertTrue(foundReader.isPresent());
+        assertEquals(readerDetails.getReaderNumber(), foundReader.get().getReaderNumber());
+        assertEquals("Manuel Sarapinto das Coives", foundReader.get().getReader().getName().toString());
+    }
+
+
+    @Test
+    void testCreateReaderWithDuplicateUsername() {
+
+        userRepository.save(new Reader("duplicate_user@example.com", "AnotherPassword123"));
+
+
+        CreateReaderRequest createReaderRequest = new CreateReaderRequest();
+        createReaderRequest.setUsername("duplicate_user@example.com");
+        createReaderRequest.setPassword("SecurePassword123");
+        createReaderRequest.setFullName("John Smith");
+        createReaderRequest.setBirthDate("1990-01-01");
+        createReaderRequest.setPhoneNumber("123456789");
+
+
+        assertThrows(ConflictException.class, () -> readerService.create(createReaderRequest, null));
+    }
+
+    @Test
+    void testCreateReaderWithForbiddenName() {
+
+        ForbiddenName forbiddenName = new ForbiddenName("forbidden");
+        forbiddenNameRepository.save(forbiddenName);
+
+
+        CreateReaderRequest createReaderRequest = new CreateReaderRequest();
+        createReaderRequest.setUsername("new_user@example.com");
+        createReaderRequest.setPassword("SecurePassword123");
+        createReaderRequest.setFullName("John forbidden Smith");
+        createReaderRequest.setBirthDate("1990-01-01");
+        createReaderRequest.setPhoneNumber("123456789");
+
+
+        assertThrows(IllegalArgumentException.class, () -> readerService.create(createReaderRequest, null));
+    }
+
 }
