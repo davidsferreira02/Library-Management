@@ -56,7 +56,7 @@ pipeline {
                         docker run -d --name sql -e 'ACCEPT_EULA=Y' -e 'SA_PASSWORD=YourStrong@Passw0rd' -p 1433:1433 mcr.microsoft.com/azure-sql-edge
                     fi
                     echo "Waiting for SQL Server to be ready..."
-                    sleep 20
+                    sleep 120
                     '''
 
                     sh 'echo "Starting Spring Boot application..."'
