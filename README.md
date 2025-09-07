@@ -33,7 +33,6 @@ flowchart TD
     C --> D[Repository Layer]
     D -->|SQL| E[(SQL Server)]
     D -->|NoSQL| F[(MongoDB)]
-    D -->|Cache| G[(Redis)]
     C --> H[ID Generation System]
     C --> I[Lending Recommendation Engine]
     B --> J[IAM Provider: Google/Facebook/Azure]
